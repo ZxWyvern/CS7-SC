@@ -1,0 +1,53 @@
+---
+interface Props {
+  siteName?: string;
+}
+const { siteName = 'CS7-SC' } = Astro.props;
+---
+
+<header>
+  <nav aria-label="Navigasi utama">
+    <a href="/" aria-current="page">
+      {siteName}
+    </a>
+    <ul>
+      <li>
+        <a href="/">Beranda</a>
+      </li>
+      <li>
+        <a href="/jadwal">Jadwal</a>
+      </li>
+      <li>
+        <a href="/galeri">Galeri</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<style>
+  header {
+    border-bottom: 1px solid #e5e5e5;
+  }
+  nav {
+    max-width: 72ch;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  ul {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+</style>

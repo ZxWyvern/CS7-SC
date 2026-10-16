@@ -1,0 +1,41 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'Website kelas CS7-SC - frontend only' } = Astro.props;
+import '../styles/global.css';
+---
+
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a href="#main" class="skip">
+      Lewati ke konten
+    </a>
+    <slot name="header" />
+    <main id="main">
+      <slot />
+    </main>
+    <slot name="footer" />
+    <style>
+      .skip {
+        position: absolute;
+        left: -999px;
+      }
+      .skip:focus {
+        left: 1rem;
+        top: 1rem;
+        background: #fff;
+        padding: 0.5rem 1rem;
+      }
+    </style>
+  </body>
+</html>
