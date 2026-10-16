@@ -8,8 +8,9 @@
 - Struktur:
   - `src/pages/` - route saja, logika minimal
   - `src/layouts/` - shell HTML, SEO, a11y (`LandingLayout` untuk landing)
-  - `src/components/landing/` - port template Homie (Header/Hero/Stats/Services/
-    Features/Cta/Pricing/Testimonials/Faq/Footer), konten Inggris ikut template
+  - `src/components/landing/` - halaman utama kelas: Header, Hero, Stats
+    (Sekilas Kelas), Services (Tentang), Features (Pengurus), Pricing
+    (Kegiatan), Cta, Faq, Footer. Konten Bahasa Indonesia.
   - `src/components/ui/` - presentational halaman kelas, props jelas
   - `src/lib/` - pure TS, wajib unit test
   - `src/content/` - (nanti) data kelas sebagai markdown/json, bukan backend
@@ -18,7 +19,7 @@
 
 ## Halaman Awal
 
-- `/` Landing Homie (port template, arah di `DESIGN.md`)
+- `/` Landing kelas CS7-SC (arah di `DESIGN.md`, placeholder `[..]` = data menyusul)
 - `/jadwal`, `/galeri` (segera, jangan link mati - R-24)
 
 ## Perintah

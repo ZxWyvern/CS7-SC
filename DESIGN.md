@@ -1,12 +1,10 @@
-# DESIGN.md - Landing Homie (port ke Astro)
+# DESIGN.md - Landing Kelas CS7-SC
 
-Arah dari template Homie yang dipilih owner. Filter antislop tetap jalan di atasnya.
+- Identitas: website resmi kelas CS7-SC untuk murid, nada rapi dan bersahabat, Bahasa Indonesia
+- Palet: Putih #FFFFFF, Tinta #1A1A1A, Abu #737373, Aksen Emerald #10B981 (hanya untuk penanda status dan ikon)
+- Tipografi: Inter untuk body/UI, Playfair Display untuk headline serif. Alasan: serif memberi rasa resmi papan pengumuman, sans menjaga keterbacaan di HP
+- Dial: ENERGY 2 / RHYTHM 2 / MOTION 1
+- Motif: 1 kata display raksasa sebagai backdrop section (TENTANG, KELAS, CS7-SC) + kartu rounded-3xl. Satu elemen memorable per layar: headline serif di hero
+- Wireframe: Header pil melayang, Hero headline + CS7-SC raksasa, Sekilas Kelas 3 angka, Tentang + 3 nilai, Pengurus + checklist, Kegiatan carousel, CTA, FAQ akordeon, Footer + CS7-SC raksasa
 
-- Identitas: marketplace sewa rumah antar individu, nada tenang dan manusiawi, Inggris (ikuti template)
-- Palet: Putih hangat #FAFAFA, Tinta #1A1A1A, Abu #737373, Aksen Emerald #10B981, Biru #3B82F6, Ungu #8B5CF6, Amber #F59E0B (aksen hanya untuk chart/status, bukan dekorasi halaman)
-- Tipografi: Inter untuk body/UI, Playfair Display untuk headline serif, Geist Mono untuk label data. Alasan: serif memberi rasa editorial properti, sans menjaga keterbacaan form.
-- Dial: ENERGY 3 / RHYTHM 3 / MOTION 2
-- Motif: 1 kata display raksasa sebagai backdrop section (MISSION, MANAGE, HOMIE) + kartu rounded-3xl. Satu elemen memorable per layar: video hero yang menyusut saat scroll.
-- Wireframe: Header pil melayang, Hero video + HOMIE raksasa + headline serif, Stats 3 angka, Mission + 3 layanan, Manage + kartu aktivitas, Properti carousel, CTA + chart, Testimoni 2 baris jalan, FAQ akordeon, Footer + HOMIE raksasa.
-
-Catatan jujur (R-17/R-18): angka stats dan testimoni di template ini data demo bawaan template, bukan data nyata. Sebelum dipakai sebagai produk sungguhan, ganti dengan data terverifikasi atau tandai demo.
+Catatan jujur: angka sekilas kelas, nama pengurus, dan jadwal kegiatan masih placeholder `[..]`. Minta data asli ke pengurus kelas sebelum publikasi. Tidak ada testimoni karena belum ada ulasan nyata (R-18).
