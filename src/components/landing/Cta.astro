@@ -1,21 +1,4 @@
 ---
-// Ringkasan pendapatan versi statis (angka demo bawaan template).
-const total = 84250;
-const segments = [
-  { name: 'Short-term rentals', value: 32000, color: '#3b82f6', pct: 38 },
-  { name: 'Long-term leases', value: 24500, color: '#10b981', pct: 29 },
-  { name: 'Property fees', value: 16800, color: '#8b5cf6', pct: 20 },
-  { name: 'Insurance', value: 10950, color: '#f59e0b', pct: 13 },
-];
-// Donut via stroke-dasharray: keliling r=70 → 439.8
-const C = 439.8;
-let offset = 0;
-const arcs = segments.map((s) => {
-  const len = (s.pct / 100) * C;
-  const a = { ...s, dash: `${len} ${C - len}`, off: -offset };
-  offset += len;
-  return a;
-});
 ---
 
 <section class="relative overflow-hidden px-6 py-32">
@@ -24,25 +7,25 @@ const arcs = segments.map((s) => {
     aria-hidden="true"
   >
     <span class="whitespace-nowrap text-[20vw] font-bold font-sans leading-none tracking-tighter text-zinc-100">
-      SIMPLIFY
+      GABUNG
     </span>
   </div>
 
   <div class="relative z-10 mx-auto max-w-7xl">
     <div class="reveal mb-16 text-center">
       <h2 class="mx-auto mb-6 max-w-4xl font-serif text-4xl font-normal leading-tight md:text-5xl">
-        Ready to simplify your rentals?
+        Punya ide untuk kelas?
       </h2>
       <p class="mx-auto mb-10 max-w-2xl text-muted-foreground">
-        Join thousands of owners and tenants who trust Homie for their real estate transactions.
+        Kelas ini jalan karena muridnya aktif. Sampaikan idemu, ikut kegiatannya.
       </p>
 
       <div class="flex flex-col justify-center gap-4 sm:flex-row">
         <a
-          href="#contact"
+          href="#kegiatan"
           class="group relative flex items-center justify-center gap-0 overflow-hidden rounded-full bg-foreground py-1.5 pl-6 pr-1.5 text-background transition-all duration-300"
         >
-          <span class="pr-4 text-sm">List a property</span>
+          <span class="pr-4 text-sm">Lihat Kegiatan</span>
           <span class="flex h-10 w-10 items-center justify-center rounded-full bg-background">
             <svg
               class="h-4 w-4 text-foreground"
@@ -59,12 +42,12 @@ const arcs = segments.map((s) => {
         </a>
 
         <a
-          href="#pricing"
+          href="#contact"
           class="group relative flex items-center justify-center gap-0 overflow-hidden rounded-full border border-border py-1.5 pl-6 pr-1.5 transition-all duration-300"
         >
           <span class="absolute inset-0 origin-right scale-x-0 rounded-full bg-foreground transition-transform duration-300 group-hover:scale-x-100"></span>
           <span class="relative z-10 pr-4 text-sm text-foreground transition-colors duration-300 group-hover:text-background">
-            Search properties
+            Hubungi Pengurus
           </span>
           <span class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full">
             <svg
@@ -80,87 +63,6 @@ const arcs = segments.map((s) => {
             </svg>
           </span>
         </a>
-      </div>
-    </div>
-
-    <div
-      class="reveal mx-auto mb-16 w-full max-w-md rounded-3xl bg-white p-8"
-      style="box-shadow: rgba(14,63,126,0.06) 0 0 0 1px, rgba(42,51,70,0.06) 0 12px 12px -6px;"
-    >
-      <div class="mb-8 flex items-center justify-between">
-        <div>
-          <h3 class="text-lg font-semibold text-slate-900">Rental Revenue</h3>
-          <p class="text-sm text-slate-500">This Quarter</p>
-        </div>
-        <div class="text-right">
-          <p class="text-2xl font-bold text-slate-900">${total.toLocaleString()}</p>
-          <p class="text-sm font-medium text-emerald-600">+12.5%</p>
-        </div>
-      </div>
-
-      <div
-        class="relative mx-auto h-56 w-56"
-        role="img"
-        aria-label="Donat pendapatan: short-term 38 persen, long-term 29 persen, fees 20 persen, insurance 13 persen"
-      >
-        <svg viewBox="0 0 180 180" class="h-full w-full -rotate-90">
-          <circle cx="90" cy="90" r="70" fill="none" stroke="#f1f5f9" stroke-width="22"></circle>
-          {arcs.map((a) => (
-            <circle
-              cx="90"
-              cy="90"
-              r="70"
-              fill="none"
-              stroke={a.color}
-              stroke-width="22"
-              stroke-dasharray={a.dash}
-              stroke-dashoffset={a.off}
-              stroke-linecap="butt"
-            />
-          ))}
-        </svg>
-        <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <p class="text-center text-xs text-slate-500">
-            Revenue
-            <br />
-            breakdown
-          </p>
-        </div>
-      </div>
-
-      <div class="mt-6 space-y-3">
-        {segments.map((s) => (
-          <div class="flex items-center gap-3 rounded-xl p-2">
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg"
-              style={`background-color:${s.color}20`}
-            >
-              <span class="h-3 w-3 rounded-full" style={`background-color:${s.color}`}></span>
-            </div>
-            <span class="flex-1 text-sm text-slate-600">{s.name}</span>
-            <div class="text-right">
-              <span class="block text-sm font-semibold text-slate-900">
-                ${s.value.toLocaleString()}
-              </span>
-              <span class="text-xs text-slate-400">{s.pct}%</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    <div class="flex flex-col items-center justify-center gap-16 md:flex-row">
-      <div class="reveal text-center">
-        <p class="text-7xl font-light text-foreground">50K+</p>
-        <p class="text-xs uppercase tracking-wider text-muted-foreground">Users</p>
-      </div>
-      <div class="reveal text-center">
-        <p class="text-7xl font-light text-foreground">15K+</p>
-        <p class="text-xs uppercase tracking-wider text-muted-foreground">Properties listed</p>
-      </div>
-      <div class="reveal text-center">
-        <p class="text-7xl font-light text-foreground">$12M+</p>
-        <p class="text-xs uppercase tracking-wider text-muted-foreground">Transactions</p>
       </div>
     </div>
   </div>

@@ -1,89 +1,56 @@
 ---
-// Katalog properti demo bawaan template. Tanpa tombol booking: tanpa backend,
-// tombol booking = dead control (R-26), jadi kartu tampil sebagai katalog saja.
-const properties = [
+// Jadwal asli menyusul dari pengurus kelas. Tanda [..] = placeholder, bukan data.
+const activities = [
   {
-    name: 'Sunset Beach Villa',
-    location: 'Malibu, California',
-    duration: 'Min. 3 nights',
-    available: 'Available now',
-    image: '/images/property-beach-villa.jpg',
-    price: 450,
-    type: 'Beachfront Villa',
-    features: ['Ocean View', 'Private Beach', 'Hot Tub', 'Chef Kitchen'],
-    amenities: ['Free Wifi', 'Parking', 'Pool'],
-    rating: 4.9,
+    name: 'Kerja Bakti Kelas',
+    schedule: '[Jadwal]',
+    place: 'Ruang kelas',
+    desc: 'Bersih-bersih dan rapikan ruang kelas bersama.',
+    tags: ['Rutin', 'Semua murid', 'Gotong royong'],
   },
   {
-    name: 'Mountain Retreat Cabin',
-    location: 'Aspen, Colorado',
-    duration: 'Min. 2 nights',
-    available: 'Dec 15 - Jan 30',
-    image: '/images/property-mountain-cabin.jpg',
-    price: 320,
-    type: 'Mountain Cabin',
-    features: ['Ski-in/Ski-out', 'Fireplace', 'Mountain Views', 'Game Room'],
-    amenities: ['Free Wifi', 'Parking', '4 Guests'],
-    rating: 4.8,
+    name: 'Belajar Kelompok',
+    schedule: '[Jadwal]',
+    place: 'Ruang kelas',
+    desc: 'Diskusi pelajaran dan persiapan ulangan bersama.',
+    tags: ['Rutin', 'Akademik', 'Diskusi'],
   },
   {
-    name: 'Downtown Luxury Loft',
-    location: 'New York City, NY',
-    duration: 'Min. 1 night',
-    available: 'Available now',
-    image: '/images/property-city-loft.jpg',
-    price: 280,
-    type: 'City Loft',
-    features: ['Skyline View', 'Rooftop Access', 'Designer Interior', 'Central Location'],
-    amenities: ['Free Wifi', '2 Guests', 'Parking'],
-    rating: 4.7,
+    name: 'Rapat Kelas',
+    schedule: '[Jadwal]',
+    place: 'Ruang kelas',
+    desc: 'Evaluasi kas, piket, dan rencana kegiatan berikutnya.',
+    tags: ['Rutin', 'Pengurus', 'Evaluasi'],
   },
   {
-    name: 'Tuscan Countryside Estate',
-    location: 'Florence, Italy',
-    duration: 'Min. 4 nights',
-    available: 'Available now',
-    image: '/images/property-tuscan-estate.jpg',
-    price: 520,
-    type: 'Country Estate',
-    features: ['Vineyard Views', 'Private Pool', 'Wine Cellar', 'Olive Grove'],
-    amenities: ['Free Wifi', 'Parking', '8 Guests'],
-    rating: 4.9,
+    name: 'Class Meeting',
+    schedule: '[Jadwal]',
+    place: 'Lapangan sekolah',
+    desc: 'Lomba antar kelas setelah ujian semester.',
+    tags: ['Semesteran', 'Olahraga', 'Lomba'],
   },
   {
-    name: 'Tropical Paradise Bungalow',
-    location: 'Bali, Indonesia',
-    duration: 'Min. 2 nights',
-    available: 'Available now',
-    image: '/images/property-tropical-bungalow.jpg',
-    price: 180,
-    type: 'Jungle Bungalow',
-    features: ['Rice Terrace View', 'Open Air Living', 'Private Garden', 'Yoga Deck'],
-    amenities: ['Free Wifi', 'Pool', '2 Guests'],
-    rating: 4.8,
+    name: 'Bakti Sosial',
+    schedule: '[Jadwal]',
+    place: '[Lokasi]',
+    desc: 'Kumpul dan salurkan bantuan untuk yang membutuhkan.',
+    tags: ['Sosial', 'Donasi', 'Lapangan'],
   },
   {
-    name: 'Lakefront Modern House',
-    location: 'Lake Tahoe, California',
-    duration: 'Min. 3 nights',
-    available: 'Year-round',
-    image: '/images/property-lakefront-modern.jpg',
-    price: 380,
-    type: 'Lakefront Home',
-    features: ['Lake Access', 'Private Dock', 'Floor-to-ceiling Windows', 'Hot Tub'],
-    amenities: ['Free Wifi', 'Parking', '6 Guests'],
-    rating: 4.9,
+    name: 'Perayaan Kelas',
+    schedule: '[Jadwal]',
+    place: 'Ruang kelas',
+    desc: 'Syukuran kenaikan kelas dan perpisahan akhir tahun.',
+    tags: ['Tahunan', 'Kebersamaan', 'Acara'],
   },
 ];
 ---
 
-<section id="pricing" class="overflow-hidden py-32">
+<section id="kegiatan" class="overflow-hidden py-32">
   <div class="reveal mx-auto mb-12 max-w-7xl px-6 text-center">
-    <h2 class="mb-6 font-serif text-4xl font-normal text-balance md:text-5xl">
-      Featured properties
-    </h2>
+    <h2 class="mb-6 font-serif text-4xl font-normal text-balance md:text-5xl">Kegiatan Kami</h2>
     <p class="mx-auto max-w-2xl leading-relaxed text-muted-foreground">
-      Discover handpicked homes from verified owners. Book with confidence.
+      Agenda rutin kelas sepanjang semester. Jadwal pasti ditempel di papan kelas.
     </p>
   </div>
 
@@ -92,7 +59,7 @@ const properties = [
       <button
         id="prop-prev"
         class="flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-zinc-100"
-        aria-label="Properti sebelumnya"
+        aria-label="Kegiatan sebelumnya"
       >
         <svg
           class="h-4 w-4"
@@ -109,7 +76,7 @@ const properties = [
       <button
         id="prop-next"
         class="flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-zinc-100"
-        aria-label="Properti berikutnya"
+        aria-label="Kegiatan berikutnya"
       >
         <svg
           class="h-4 w-4"
@@ -127,63 +94,28 @@ const properties = [
 
     <div
       id="prop-track"
-      class="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x"
+      class="flex snap-x gap-6 overflow-x-auto scroll-smooth pb-4"
       tabindex="0"
       role="region"
-      aria-label="Daftar properti unggulan"
+      aria-label="Daftar kegiatan kelas"
     >
-      {properties.map((p) => (
+      {activities.map((a) => (
         <article
-          class="w-[85vw] flex-shrink-0 snap-start overflow-hidden rounded-3xl bg-white sm:w-[60vw] lg:w-[400px]"
+          class="w-[85vw] flex-shrink-0 snap-start rounded-3xl bg-white p-6 sm:w-[60vw] lg:w-[400px]"
           style="box-shadow: rgba(14,63,126,0.04) 0 0 0 1px, rgba(42,51,70,0.04) 0 6px 6px -3px, rgba(14,63,126,0.04) 0 24px 24px -12px;"
         >
-          <div class="relative aspect-[16/9] w-full overflow-hidden">
-            <img src={p.image} alt={p.name} class="h-full w-full object-cover" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-            <div class="absolute left-3 top-3 rounded-lg bg-white/20 px-3 py-1 text-sm font-semibold text-white backdrop-blur-sm">
-              ★ {p.rating}
-            </div>
-            <div class="absolute bottom-3 left-3 right-3">
-              <span class="text-sm font-medium text-white/90">{p.type}</span>
-              <h3 class="text-balance text-2xl font-bold text-white">{p.name}</h3>
-            </div>
-          </div>
-          <div class="flex flex-1 flex-col p-6">
-            <div class="mb-4 space-y-2">
-              <p class="text-sm text-slate-600">{p.location}</p>
-              <p class="text-sm text-slate-600">
-                {p.available} • {p.duration}
-              </p>
-            </div>
-            <div class="mb-4">
-              <p class="mb-2 text-sm font-semibold text-slate-900">Property Highlights</p>
-              <div class="flex flex-wrap gap-2">
-                {p.features.slice(0, 3).map((f) => (
-                  <span class="rounded-lg bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
-                    {f}
-                  </span>
-                ))}
-                {p.features.length > 3 && (
-                  <span class="rounded-lg bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
-                    +{p.features.length - 3} more
-                  </span>
-                )}
-              </div>
-            </div>
-            <div class="mb-4 flex flex-wrap gap-3">
-              {p.amenities.map((a) => (
-                <span class="text-sm text-slate-600">{a}</span>
-              ))}
-            </div>
-            <div class="mt-auto flex items-center justify-between pt-4">
-              <div>
-                <div class="text-sm text-slate-500">From</div>
-                <div class="text-2xl font-bold text-slate-900">
-                  ${p.price}
-                  <span class="text-sm font-normal text-slate-500">/night</span>
-                </div>
-              </div>
-            </div>
+          <p class="mb-1 text-xs font-medium uppercase tracking-wider text-emerald-700">
+            {a.schedule}
+          </p>
+          <h3 class="mb-2 text-2xl font-bold text-slate-900">{a.name}</h3>
+          <p class="mb-4 text-sm text-slate-600">{a.place}</p>
+          <p class="mb-4 text-sm leading-relaxed text-slate-600">{a.desc}</p>
+          <div class="flex flex-wrap gap-2">
+            {a.tags.map((t) => (
+              <span class="rounded-lg bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
+                {t}
+              </span>
+            ))}
           </div>
         </article>
       ))}
@@ -200,31 +132,4 @@ const properties = [
   document
     .getElementById('prop-next')
     ?.addEventListener('click', () => track?.scrollBy({ left: step() }));
-
-  // Auto-scroll seperti template: berhenti saat disentuh/fokus, mati bila reduced-motion
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (track && !reduce) {
-    let paused = false;
-    let last = performance.now();
-    const tick = (now: number) => {
-      const dt = now - last;
-      last = now;
-      if (!paused) {
-        track.scrollLeft += (dt / 1000) * 40;
-        if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) {
-          track.scrollLeft = 0;
-        }
-      }
-      requestAnimationFrame(tick);
-    };
-    const pause = () => (paused = true);
-    const resume = () => (paused = false);
-    track.addEventListener('pointerenter', pause);
-    track.addEventListener('pointerleave', resume);
-    track.addEventListener('focusin', pause);
-    track.addEventListener('focusout', resume);
-    track.addEventListener('touchstart', pause, { passive: true });
-    track.addEventListener('touchend', resume);
-    requestAnimationFrame(tick);
-  }
 </script>

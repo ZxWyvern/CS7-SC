@@ -1,43 +1,28 @@
 ---
-// Kartu aktivitas versi statis: angka demo bawaan template, tanpa tick live.
-const hourly = [
-  { hour: '12am', v: 120 },
-  { hour: '2am', v: 80 },
-  { hour: '4am', v: 45 },
-  { hour: '6am', v: 90 },
-  { hour: '8am', v: 280 },
-  { hour: '10am', v: 420 },
-  { hour: '12pm', v: 380 },
-  { hour: '2pm', v: 450 },
-  { hour: '4pm', v: 520 },
-  { hour: '6pm', v: 480 },
-  { hour: '8pm', v: 350 },
-  { hour: '10pm', v: 220 },
+// Nama asli menyusul dari pengurus kelas. Tanda [..] = placeholder, bukan data.
+const officers = [
+  { role: 'Ketua Kelas', name: '[Nama]', job: 'Koordinasi dan penanggung jawab kelas' },
+  { role: 'Wakil Ketua', name: '[Nama]', job: 'Mendampingi ketua dan koordinator seksi' },
+  { role: 'Sekretaris', name: '[Nama]', job: 'Absensi, surat, dan arsip kelas' },
+  { role: 'Bendahara', name: '[Nama]', job: 'Kas kelas dan laporan keuangan' },
 ];
-const max = Math.max(...hourly.map((d) => d.v));
-const trending = [
-  { page: 'Paris Apartment', visitors: 245 },
-  { page: "Côte d'Azur Villa", visitors: 189 },
-  { page: 'Lyon Studio', visitors: 156 },
-  { page: 'Bordeaux House', visitors: 98 },
-];
-const features = [
-  'Create a listing in 5 minutes',
-  'Profile verification included',
-  'Instant messaging',
-  '24/7 support',
-  'No hidden fees',
-  'Secure payment',
+const points = [
+  'Rapat kelas rutin',
+  'Jadwal piket bergilir',
+  'Kas tercatat terbuka',
+  'Koordinator tiap seksi',
+  'Info diumumkan terbuka',
+  'Siap bantu wali kelas',
 ];
 ---
 
-<section id="features" class="relative overflow-hidden px-6 py-32">
+<section id="pengurus" class="relative overflow-hidden px-6 py-32">
   <div
     class="pointer-events-none absolute left-0 right-0 top-1/2 z-0 flex -translate-y-1/2 justify-center"
     aria-hidden="true"
   >
     <span class="whitespace-nowrap text-center text-[20vw] font-bold leading-none tracking-tighter text-zinc-100 sm:text-[18vw] md:text-[16vw] lg:text-[14vw]">
-      MANAGE
+      KELAS
     </span>
   </div>
 
@@ -49,54 +34,19 @@ const features = [
           style="box-shadow: rgba(14,63,126,0.04) 0 0 0 1px, rgba(42,51,69,0.04) 0 1px 1px -0.5px, rgba(42,51,70,0.04) 0 6px 6px -3px, rgba(14,63,126,0.04) 0 24px 24px -12px;"
         >
           <div class="mb-6 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <h3 class="text-lg font-semibold text-slate-900">Property Activity</h3>
-              <span class="relative flex h-3 w-3">
-                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex h-3 w-3 rounded-full bg-emerald-500"></span>
-              </span>
-            </div>
-            <span class="text-sm text-slate-500">Live</span>
+            <h3 class="text-lg font-semibold text-slate-900">Pengurus Inti</h3>
+            <span class="text-sm text-slate-500">Periode berjalan</span>
           </div>
-
-          <div class="mb-6 grid grid-cols-2 gap-4">
-            <div class="rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 p-4 text-black">
-              <p class="mb-1 text-sm opacity-80">Viewing Now</p>
-              <p class="text-3xl font-bold">847</p>
-            </div>
-            <div class="rounded-xl bg-gradient-to-br from-violet-100 to-purple-200 p-4 text-black">
-              <p class="mb-1 text-sm opacity-80">Property Views</p>
-              <p class="text-3xl font-bold">3,420</p>
-            </div>
-          </div>
-
-          <div class="mb-6">
-            <p class="mb-3 text-sm font-medium text-slate-700">Views Today</p>
-            <div
-              class="flex h-32 items-end gap-1"
-              role="img"
-              aria-label="Grafik kunjungan hari ini, puncak pukul 4 sore"
-            >
-              {hourly.map((d) => (
-                <div
-                  class="flex-1 rounded-t"
-                  title={`${d.hour}: ${d.v}`}
-                  style={`height:${Math.round((d.v / max) * 100)}%; background:${d.v === max ? '#60a5fa' : '#e2e8f0'};`}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p class="mb-3 text-sm font-medium text-slate-700">Trending Properties</p>
-            <div class="space-y-2">
-              {trending.map((t) => (
-                <div class="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
-                  <span class="text-sm text-slate-600">{t.page}</span>
-                  <span class="text-sm font-medium text-slate-900">{t.visitors}</span>
+          <div class="space-y-2">
+            {officers.map((o) => (
+              <div class="flex items-center justify-between gap-4 rounded-lg bg-slate-50 px-4 py-3">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">{o.role}</p>
+                  <p class="text-xs text-slate-500">{o.job}</p>
                 </div>
-              ))}
-            </div>
+                <span class="text-sm font-medium text-slate-700">{o.name}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -104,16 +54,16 @@ const features = [
       <div class="order-1 space-y-8 lg:order-2">
         <div class="reveal">
           <h2 class="mb-6 font-serif text-4xl font-normal text-balance md:text-5xl">
-            Manage your rentals with ease
+            Dikelola murid, untuk murid
           </h2>
           <p class="text-lg leading-relaxed text-muted-foreground">
-            Track your income, manage reservations, and communicate with tenants from a single
-            intuitive and modern interface.
+            Pengurus kelas memastikan kegiatan jalan, informasi sampai, dan tidak ada urusan yang
+            menggantung.
           </p>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2">
-          {features.map((f) => (
+          {points.map((p) => (
             <div class="reveal flex items-center gap-2 rounded-xl px-3 py-1 transition-colors duration-300 hover:bg-zinc-50">
               <div class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-md">
                 <svg
@@ -127,7 +77,7 @@ const features = [
                   <path d="M20 6 9 17l-5-5"></path>
                 </svg>
               </div>
-              <span class="text-sm text-foreground">{f}</span>
+              <span class="text-sm text-foreground">{p}</span>
             </div>
           ))}
         </div>
