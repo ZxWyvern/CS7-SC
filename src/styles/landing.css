@@ -63,6 +63,11 @@ html {
     @apply bg-background text-foreground;
     overflow-x: clip;
   }
+  /* Header fixed menutupi judul section saat lompat anchor: samakan offset template (100px) */
+  section[id],
+  footer[id] {
+    scroll-margin-top: 6rem;
+  }
 }
 
 /* Reveal on scroll — 1 momen per section, bukan animasi template */

@@ -46,6 +46,14 @@ const rowB = [
 
     <div class="space-y-6">
       <div class="relative overflow-hidden">
+        <div
+          class="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-32 bg-gradient-to-r from-background to-transparent"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-32 bg-gradient-to-l from-background to-transparent"
+          aria-hidden="true"
+        ></div>
         <div class="marquee flex w-max" data-dir="1">
           {[0, 1].map((half) => (
             <div class="flex gap-6 pr-6" aria-hidden={half === 1}>
@@ -70,6 +78,14 @@ const rowB = [
       </div>
 
       <div class="relative overflow-hidden">
+        <div
+          class="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-32 bg-gradient-to-r from-background to-transparent"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-32 bg-gradient-to-l from-background to-transparent"
+          aria-hidden="true"
+        ></div>
         <div class="marquee flex w-max" data-dir="-1">
           {[0, 1].map((half) => (
             <div class="flex gap-6 pr-6" aria-hidden={half === 1}>
