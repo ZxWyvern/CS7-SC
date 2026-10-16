@@ -1,0 +1,124 @@
+---
+const videoSrc =
+  'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/af7687fd-f2ad-4f2a-96f0-b56fa7d3769c-08wERpo5U1sktxs1vcRsJW9ueslNZv.mp4';
+---
+
+<section class="relative flex min-h-screen items-center overflow-hidden px-6 pb-12 pt-32">
+  <div class="absolute inset-0 top-0" aria-hidden="true">
+    <div id="hero-media" class="h-[100vh] w-full overflow-hidden will-change-transform">
+      <video
+        autoplay
+        loop
+        muted
+        playsinline
+        poster="/images/hero-bg.png"
+        class="h-full w-full object-cover"
+        src={videoSrc}
+      ></video>
+    </div>
+  </div>
+
+  <div
+    id="hero-word"
+    class="pointer-events-none absolute bottom-0 left-0 right-0 z-[5] flex w-full items-end justify-center overflow-hidden"
+    aria-hidden="true"
+  >
+    <span class="block text-center text-[28vw] font-bold leading-none tracking-tighter text-white select-none sm:text-[25vw] md:text-[22vw] lg:text-[20vw]">
+      HOMIE
+    </span>
+  </div>
+
+  <div class="relative z-10 mx-auto w-full max-w-7xl">
+    <div class="mb-12 text-center">
+      <h1
+        id="hero-title"
+        class="mx-auto mb-6 w-full max-w-6xl px-4 font-serif text-[3.5rem] font-normal leading-tight text-balance sm:text-[4.5rem] md:text-[5.5rem] lg:text-[6.5rem] xl:text-[7.5rem] 2xl:text-[8.5rem]"
+      >
+        Find your home away from home
+      </h1>
+    </div>
+
+    <div class="flex flex-col items-center justify-center gap-8">
+      <img
+        src="/images/iphone-frame.png"
+        alt="Aplikasi Homie"
+        class="relative z-10 h-auto w-[234px] md:w-[281px] lg:w-[351px]"
+        loading="eager"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  #hero-title .ch {
+    display: inline-block;
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(30px);
+    animation: hero-in 0.6s ease forwards;
+  }
+  @keyframes hero-in {
+    to {
+      opacity: 1;
+      filter: blur(0);
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #hero-title .ch {
+      opacity: 1;
+      filter: none;
+      transform: none;
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Split headline jadi huruf + animasi blur masuk (progresif: tanpa JS tetap tampil)
+  const title = document.getElementById('hero-title');
+  if (title && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const text = title.textContent ?? '';
+    title.textContent = '';
+    let i = 0;
+    for (const word of text.split(' ')) {
+      const w = document.createElement('span');
+      w.style.display = 'inline-block';
+      w.style.whiteSpace = 'nowrap';
+      for (const ch of word) {
+        const s = document.createElement('span');
+        s.className = 'ch';
+        s.style.animationDelay = `${0.3 + i * 0.04}s`;
+        s.textContent = ch;
+        w.appendChild(s);
+        i++;
+      }
+      title.appendChild(w);
+      title.appendChild(document.createTextNode(' '));
+    }
+  }
+
+  // Video menyusut + kata HOMIE bergeser saat scroll (satu momen gerak)
+  const media = document.getElementById('hero-media');
+  const word = document.getElementById('hero-word');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (media && word && !reduce) {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const p = Math.min(window.scrollY / 400, 1);
+        const easeQuad = p * (2 - p);
+        const easeCubic = 1 - Math.pow(1 - p, 3);
+        media.style.transform = `scale(${1 - easeQuad * 0.15})`;
+        media.style.borderRadius = `${easeCubic * 48}px`;
+        media.style.height = `${100 - easeQuad * 37.5}vh`;
+        word.style.transform = `translateY(${p * 150}px)`;
+        word.style.opacity = String(1 - p * 0.8);
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+</script>

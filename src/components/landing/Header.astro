@@ -1,0 +1,141 @@
+---
+const links = [
+  { href: '#how-it-works', label: 'Mission' },
+  { href: '#features', label: 'Features' },
+  { href: '#pricing', label: 'Properties' },
+  { href: '#testimonials', label: 'Reviews' },
+  { href: '#faq', label: 'FAQ' },
+];
+---
+
+<header class="fixed left-0 right-0 top-0 z-50 px-4 pt-4">
+  <div class="mx-auto max-w-7xl rounded-2xl border border-zinc-200 bg-white/70 px-6 py-3 backdrop-blur-xl">
+    <div class="flex items-center justify-between">
+      <a href="#top" class="flex cursor-pointer items-center gap-2" aria-label="Homie ke atas">
+        <svg
+          class="h-6 w-6 text-black"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span class="text-lg font-medium tracking-tight text-black">Homie</span>
+      </a>
+
+      <nav class="hidden items-center gap-8 md:flex" aria-label="Navigasi utama">
+        {links.map((l) => (
+          <a href={l.href} class="text-sm text-zinc-600 transition-colors hover:text-black">
+            {l.label}
+          </a>
+        ))}
+      </nav>
+
+      <div class="hidden items-center gap-1 md:flex">
+        <a
+          href="#contact"
+          class="group relative flex items-center gap-0 overflow-hidden rounded-full border border-zinc-300 py-1 pl-5 pr-1 transition-all duration-300"
+        >
+          <span class="absolute inset-0 origin-right scale-x-0 rounded-full bg-black transition-transform duration-300 group-hover:scale-x-100"></span>
+          <span class="relative z-10 pr-3 text-sm text-black transition-colors duration-300 group-hover:text-white">
+            List a property
+          </span>
+          <span class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full">
+            <svg
+              class="h-4 w-4 text-black transition-colors duration-300 group-hover:text-white"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </span>
+        </a>
+      </div>
+
+      <button
+        id="menu-btn"
+        class="text-black md:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label="Buka menu"
+      >
+        <svg
+          id="icon-open"
+          class="h-6 w-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path d="M4 6h16"></path>
+          <path d="M4 12h16"></path>
+          <path d="M4 18h16"></path>
+        </svg>
+        <svg
+          id="icon-close"
+          class="hidden h-6 w-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path d="M18 6 6 18"></path>
+          <path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <nav
+      id="mobile-nav"
+      class="hidden flex-col gap-4 border-t border-zinc-200 pb-6 pt-6 md:hidden"
+      aria-label="Navigasi seluler"
+    >
+      {links.map((l) => (
+        <a href={l.href} class="text-zinc-600 transition-colors hover:text-black">
+          {l.label}
+        </a>
+      ))}
+      <a
+        href="#contact"
+        class="mt-4 w-fit rounded-full border border-zinc-300 px-5 py-2 text-sm text-black"
+      >
+        List a property
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('menu-btn');
+  const nav = document.getElementById('mobile-nav');
+  const iconOpen = document.getElementById('icon-open');
+  const iconClose = document.getElementById('icon-close');
+  btn?.addEventListener('click', () => {
+    const open = nav?.classList.toggle('hidden');
+    const isOpen = open === false;
+    btn.setAttribute('aria-expanded', String(isOpen));
+    btn.setAttribute('aria-label', isOpen ? 'Tutup menu' : 'Buka menu');
+    iconOpen?.classList.toggle('hidden', isOpen);
+    iconClose?.classList.toggle('hidden', !isOpen);
+    if (isOpen) nav?.classList.add('flex');
+    else nav?.classList.remove('flex');
+  });
+  nav?.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('click', () => {
+      nav.classList.add('hidden');
+      nav.classList.remove('flex');
+      btn?.setAttribute('aria-expanded', 'false');
+      iconOpen?.classList.remove('hidden');
+      iconClose?.classList.add('hidden');
+    })
+  );
+</script>

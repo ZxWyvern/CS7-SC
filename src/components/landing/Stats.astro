@@ -1,0 +1,60 @@
+---
+interface Stat {
+  end: number;
+  suffix: string;
+  label: string;
+}
+// Data demo bawaan template, bukan data nyata (lihat DESIGN.md).
+const stats: Stat[] = [
+  { end: 15, suffix: 'K+', label: 'Properties Listed' },
+  { end: 120, suffix: '', label: 'Cities' },
+  { end: 50, suffix: 'K+', label: 'Users' },
+];
+---
+
+<section id="stats-section" class="bg-background px-6 py-24">
+  <div class="mx-auto max-w-4xl">
+    <div class="grid grid-cols-1 gap-12 md:grid-cols-3 lg:gap-16">
+      {stats.map((s, i) => (
+        <div class="reveal text-center" style={`transition-delay:${200 + i * 100}ms`}>
+          <p class="mb-2 text-6xl font-light leading-none text-foreground md:text-7xl">
+            <span class="count" data-end={s.end} data-suffix={s.suffix}>
+              0{s.suffix}
+            </span>
+          </p>
+          <p class="text-xs uppercase tracking-wider text-muted-foreground">{s.label}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const els = document.querySelectorAll<HTMLElement>('#stats-section .count');
+  const run = (el: HTMLElement) => {
+    const end = Number(el.dataset.end ?? '0');
+    const suffix = el.dataset.suffix ?? '';
+    const dur = 2000;
+    let start: number | null = null;
+    const step = (t: number) => {
+      if (start === null) start = t;
+      const p = Math.min((t - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 4);
+      el.textContent = `${Math.floor(eased * end)}${suffix}`;
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          run(e.target as HTMLElement);
+          io.unobserve(e.target);
+        }
+      }
+    },
+    { threshold: 0.3 }
+  );
+  els.forEach((el) => io.observe(el));
+</script>
