@@ -1,0 +1,119 @@
+---
+// Testimoni demo bawaan template, bukan ulasan nyata (lihat DESIGN.md).
+const rowA = [
+  {
+    name: 'Marie Dupont',
+    role: 'Owner in Nice',
+    content: 'I rented out my apartment in less than a week. The interface is so intuitive!',
+  },
+  {
+    name: 'Thomas Martin',
+    role: 'Tenant in Paris',
+    content: 'Finally a transparent platform. I found my studio without paying agency fees.',
+  },
+  {
+    name: 'Sophie Bernard',
+    role: 'Owner in Lyon',
+    content: 'The tenant verification system gives me peace of mind. I recommend it 100%!',
+  },
+];
+const rowB = [
+  {
+    name: 'Lucas Petit',
+    role: 'Tenant in Bordeaux',
+    content: "Best rental experience I've ever had. The process was seamless from start to finish.",
+  },
+  {
+    name: 'Emma Laurent',
+    role: 'Owner in Marseille',
+    content: 'My property was listed and rented within days. Incredible platform!',
+  },
+  {
+    name: 'Antoine Rousseau',
+    role: 'Tenant in Toulouse',
+    content: 'No hidden fees, no surprises. Exactly what I was looking for in a rental app.',
+  },
+];
+---
+
+<section id="testimonials" class="px-6 py-32">
+  <div class="mx-auto max-w-7xl">
+    <div class="reveal mb-16 text-center">
+      <h2 class="font-serif text-4xl font-normal leading-tight md:text-5xl">
+        What they say about us
+      </h2>
+    </div>
+
+    <div class="space-y-6">
+      <div class="relative">
+        <div class="marquee flex gap-6 overflow-hidden" data-dir="1">
+          {[...rowA, ...rowA].map((t, i) => (
+            <div
+              class="w-full flex-shrink-0 rounded-2xl bg-card p-8 py-4 sm:w-[400px]"
+              aria-hidden={i >= rowA.length}
+            >
+              <div class="mb-6 flex items-start gap-4">
+                <img
+                  src="/placeholder-user.jpg"
+                  alt=""
+                  class="h-12 w-12 rounded-full object-cover"
+                  loading="lazy"
+                />
+                <p class="flex-1 text-lg leading-relaxed text-foreground">“{t.content}”</p>
+              </div>
+              <p class="text-sm font-bold text-foreground">{t.name}</p>
+              <p class="text-xs text-muted-foreground">{t.role}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="relative">
+        <div class="marquee flex gap-6 overflow-hidden" data-dir="-1">
+          {[...rowB, ...rowB].map((t, i) => (
+            <div
+              class="w-full flex-shrink-0 rounded-2xl bg-card p-8 py-4 sm:w-[400px]"
+              aria-hidden={i >= rowB.length}
+            >
+              <div class="mb-6 flex items-start gap-4">
+                <img
+                  src="/placeholder-user.jpg"
+                  alt=""
+                  class="h-12 w-12 rounded-full object-cover"
+                  loading="lazy"
+                />
+                <p class="flex-1 text-lg leading-relaxed text-foreground">“{t.content}”</p>
+              </div>
+              <p class="text-sm font-bold text-foreground">{t.name}</p>
+              <p class="text-sm text-muted-foreground">{t.role}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .marquee {
+    animation: marquee 40s linear infinite;
+  }
+  .marquee[data-dir='-1'] {
+    animation-direction: reverse;
+  }
+  .marquee:hover,
+  .marquee:focus-within {
+    animation-play-state: paused;
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee {
+      animation: none;
+      overflow-x: auto;
+    }
+  }
+</style>

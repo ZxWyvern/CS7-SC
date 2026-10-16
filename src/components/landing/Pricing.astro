@@ -1,0 +1,203 @@
+---
+// Katalog properti demo bawaan template. Tanpa tombol booking: tanpa backend,
+// tombol booking = dead control (R-26), jadi kartu tampil sebagai katalog saja.
+const properties = [
+  {
+    name: 'Sunset Beach Villa',
+    location: 'Malibu, California',
+    duration: 'Min. 3 nights',
+    available: 'Available now',
+    image: '/images/property-beach-villa.jpg',
+    price: 450,
+    type: 'Beachfront Villa',
+    features: ['Ocean View', 'Private Beach', 'Hot Tub', 'Chef Kitchen'],
+    amenities: ['Free Wifi', 'Parking', 'Pool'],
+    rating: 4.9,
+  },
+  {
+    name: 'Mountain Retreat Cabin',
+    location: 'Aspen, Colorado',
+    duration: 'Min. 2 nights',
+    available: 'Dec 15 - Jan 30',
+    image: '/images/property-mountain-cabin.jpg',
+    price: 320,
+    type: 'Mountain Cabin',
+    features: ['Ski-in/Ski-out', 'Fireplace', 'Mountain Views', 'Game Room'],
+    amenities: ['Free Wifi', 'Parking', '4 Guests'],
+    rating: 4.8,
+  },
+  {
+    name: 'Downtown Luxury Loft',
+    location: 'New York City, NY',
+    duration: 'Min. 1 night',
+    available: 'Available now',
+    image: '/images/property-city-loft.jpg',
+    price: 280,
+    type: 'City Loft',
+    features: ['Skyline View', 'Rooftop Access', 'Designer Interior', 'Central Location'],
+    amenities: ['Free Wifi', '2 Guests', 'Parking'],
+    rating: 4.7,
+  },
+  {
+    name: 'Tuscan Countryside Estate',
+    location: 'Florence, Italy',
+    duration: 'Min. 4 nights',
+    available: 'Available now',
+    image: '/images/property-tuscan-estate.jpg',
+    price: 520,
+    type: 'Country Estate',
+    features: ['Vineyard Views', 'Private Pool', 'Wine Cellar', 'Olive Grove'],
+    amenities: ['Free Wifi', 'Parking', '8 Guests'],
+    rating: 4.9,
+  },
+  {
+    name: 'Tropical Paradise Bungalow',
+    location: 'Bali, Indonesia',
+    duration: 'Min. 2 nights',
+    available: 'Available now',
+    image: '/images/property-tropical-bungalow.jpg',
+    price: 180,
+    type: 'Jungle Bungalow',
+    features: ['Rice Terrace View', 'Open Air Living', 'Private Garden', 'Yoga Deck'],
+    amenities: ['Free Wifi', 'Pool', '2 Guests'],
+    rating: 4.8,
+  },
+  {
+    name: 'Lakefront Modern House',
+    location: 'Lake Tahoe, California',
+    duration: 'Min. 3 nights',
+    available: 'Year-round',
+    image: '/images/property-lakefront-modern.jpg',
+    price: 380,
+    type: 'Lakefront Home',
+    features: ['Lake Access', 'Private Dock', 'Floor-to-ceiling Windows', 'Hot Tub'],
+    amenities: ['Free Wifi', 'Parking', '6 Guests'],
+    rating: 4.9,
+  },
+];
+---
+
+<section id="pricing" class="overflow-hidden py-32">
+  <div class="reveal mx-auto mb-12 max-w-7xl px-6 text-center">
+    <h2 class="mb-6 font-serif text-4xl font-normal text-balance md:text-5xl">
+      Featured properties
+    </h2>
+    <p class="mx-auto max-w-2xl leading-relaxed text-muted-foreground">
+      Discover handpicked homes from verified owners. Book with confidence.
+    </p>
+  </div>
+
+  <div class="reveal relative mx-auto max-w-7xl px-6">
+    <div class="mb-4 flex justify-end gap-2">
+      <button
+        id="prop-prev"
+        class="flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-zinc-100"
+        aria-label="Properti sebelumnya"
+      >
+        <svg
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path d="M19 12H5"></path>
+          <path d="m12 19-7-7 7-7"></path>
+        </svg>
+      </button>
+      <button
+        id="prop-next"
+        class="flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-zinc-100"
+        aria-label="Properti berikutnya"
+      >
+        <svg
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div
+      id="prop-track"
+      class="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x"
+      tabindex="0"
+      role="region"
+      aria-label="Daftar properti unggulan"
+    >
+      {properties.map((p) => (
+        <article
+          class="w-[85vw] flex-shrink-0 snap-start overflow-hidden rounded-3xl bg-white sm:w-[60vw] lg:w-[400px]"
+          style="box-shadow: rgba(14,63,126,0.04) 0 0 0 1px, rgba(42,51,70,0.04) 0 6px 6px -3px, rgba(14,63,126,0.04) 0 24px 24px -12px;"
+        >
+          <div class="relative aspect-[16/9] w-full overflow-hidden">
+            <img src={p.image} alt={p.name} class="h-full w-full object-cover" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+            <div class="absolute left-3 top-3 rounded-lg bg-white/20 px-3 py-1 text-sm font-semibold text-white backdrop-blur-sm">
+              ★ {p.rating}
+            </div>
+            <div class="absolute bottom-3 left-3 right-3">
+              <span class="text-sm font-medium text-white/90">{p.type}</span>
+              <h3 class="text-balance text-2xl font-bold text-white">{p.name}</h3>
+            </div>
+          </div>
+          <div class="flex flex-1 flex-col p-6">
+            <div class="mb-4 space-y-2">
+              <p class="text-sm text-slate-600">{p.location}</p>
+              <p class="text-sm text-slate-600">
+                {p.available} • {p.duration}
+              </p>
+            </div>
+            <div class="mb-4">
+              <p class="mb-2 text-sm font-semibold text-slate-900">Property Highlights</p>
+              <div class="flex flex-wrap gap-2">
+                {p.features.slice(0, 3).map((f) => (
+                  <span class="rounded-lg bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+                    {f}
+                  </span>
+                ))}
+                {p.features.length > 3 && (
+                  <span class="rounded-lg bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
+                    +{p.features.length - 3} more
+                  </span>
+                )}
+              </div>
+            </div>
+            <div class="mb-4 flex flex-wrap gap-3">
+              {p.amenities.map((a) => (
+                <span class="text-sm text-slate-600">{a}</span>
+              ))}
+            </div>
+            <div class="mt-auto flex items-center justify-between pt-4">
+              <div>
+                <div class="text-sm text-slate-500">From</div>
+                <div class="text-2xl font-bold text-slate-900">
+                  ${p.price}
+                  <span class="text-sm font-normal text-slate-500">/night</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const track = document.getElementById('prop-track');
+  const step = () => (track ? track.clientWidth * 0.8 : 0);
+  document
+    .getElementById('prop-prev')
+    ?.addEventListener('click', () => track?.scrollBy({ left: -step() }));
+  document
+    .getElementById('prop-next')
+    ?.addEventListener('click', () => track?.scrollBy({ left: step() }));
+</script>

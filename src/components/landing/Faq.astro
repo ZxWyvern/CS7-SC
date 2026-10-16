@@ -1,0 +1,65 @@
+---
+const faqs = [
+  {
+    q: 'How do I post a listing on Homie?',
+    a: "It's very simple! Create an account, click 'Post a listing', add photos and a description of your property, set the price and availability. Your listing will be live within minutes after verification.",
+  },
+  {
+    q: 'What are the fees for owners?',
+    a: 'Homie charges a 3% commission only when a rental is confirmed. No listing fees, no mandatory subscription. The Pro plan at $49/month reduces the commission to 2% for multi-property owners.',
+  },
+  {
+    q: 'How are tenants verified?',
+    a: 'Each tenant must provide an ID and proof of income. We verify these documents and assign a trust score. Owners can view the complete profile before accepting a request.',
+  },
+  {
+    q: 'Are payments secure?',
+    a: 'Yes, all payments go through our secure platform. Funds are held until check-in confirmation, then released to the owner. In case of disputes, our team intervenes to find a solution.',
+  },
+  {
+    q: 'What does the damage insurance cover?',
+    a: 'Our included insurance covers material damage up to $5,000 per rental. It protects owners against accidental damage. A $200 deductible applies in case of a claim.',
+  },
+  {
+    q: 'Can I cancel a reservation?',
+    a: 'Cancellation conditions are set by each owner (flexible, moderate, or strict). Refunds are calculated based on these conditions. Force majeure cases may qualify for a full refund.',
+  },
+];
+---
+
+<section id="faq" class="px-6 py-32 pb-40">
+  <div class="mx-auto max-w-4xl">
+    <div class="reveal mb-16 text-center">
+      <h2 class="mb-6 font-serif text-4xl font-normal text-balance md:text-5xl">
+        Frequently asked questions
+      </h2>
+      <p class="mx-auto max-w-2xl leading-relaxed text-muted-foreground">
+        Everything you need to know about Homie. Have a question not listed? Contact our support.
+      </p>
+    </div>
+
+    <div class="space-y-3">
+      {faqs.map((f) => (
+        <details class="reveal group rounded-xl border border-border bg-card px-6 open:border-foreground/30">
+          <summary class="cursor-pointer list-none py-5 text-base font-medium text-foreground [&::-webkit-details-marker]:hidden">
+            <span class="flex items-center justify-between gap-4">
+              {f.q}
+              <svg
+                class="h-4 w-4 flex-shrink-0 transition-transform duration-300 group-open:rotate-45"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path d="M12 5v14"></path>
+                <path d="M5 12h14"></path>
+              </svg>
+            </span>
+          </summary>
+          <p class="pb-5 text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
