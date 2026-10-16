@@ -1,26 +1,30 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Navbar from '../components/ui/Navbar.astro';
-import Footer from '../components/ui/Footer.astro';
+import LandingLayout from '../layouts/LandingLayout.astro';
+import Header from '../components/landing/Header.astro';
+import Hero from '../components/landing/Hero.astro';
+import Stats from '../components/landing/Stats.astro';
+import Services from '../components/landing/Services.astro';
+import Features from '../components/landing/Features.astro';
+import Cta from '../components/landing/Cta.astro';
+import Pricing from '../components/landing/Pricing.astro';
+import Testimonials from '../components/landing/Testimonials.astro';
+import Faq from '../components/landing/Faq.astro';
+import Footer from '../components/landing/Footer.astro';
 ---
 
-<BaseLayout title="CS7-SC - Website Kelas">
-  <Navbar slot="header" />
-  <h1>CS7-SC</h1>
-  <p>
-    <strong>draft without direction</strong> - ENERGY 1 / RHYTHM 1 / MOTION 1
-  </p>
-  <p>
-    Website kelas, frontend only tanpa backend. Struktur dan workflow sudah siap. Isi DESIGN.md dulu
-    sebelum poles UI.
-  </p>
-  <ul>
-    <li>
-      <a href="/jadwal">Jadwal (segera)</a>
-    </li>
-    <li>
-      <a href="/galeri">Galeri (segera)</a>
-    </li>
-  </ul>
-  <Footer slot="footer" />
-</BaseLayout>
+<LandingLayout>
+  <div id="top">
+    <Header />
+    <main id="main">
+      <Hero />
+      <Stats />
+      <Services />
+      <Features />
+      <Cta />
+      <Pricing />
+      <Testimonials />
+      <Faq />
+    </main>
+    <Footer />
+  </div>
+</LandingLayout>

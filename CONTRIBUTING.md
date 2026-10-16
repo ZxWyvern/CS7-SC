@@ -18,11 +18,11 @@ tanpa izin tertulis.
 2. Commit setiap perubahan di local dulu sebelum push ke origin.
    Satu commit = satu tujuan, pesan jelas. Push ke `origin` hanya
    setelah semua cek lokal hijau.
-2. Frontend saja, tanpa backend. Jangan tambah auth, database, API server.
-3. Kalau ubah UI, isi `DESIGN.md` dulu. Tanpa arah = draft, bukan deliverable.
-4. Aset (logo, foto, angka, testimoni, nav): tanya dulu atau pakai
+3. Frontend saja, tanpa backend. Jangan tambah auth, database, API server.
+4. Kalau ubah UI, isi `DESIGN.md` dulu. Tanpa arah = draft, bukan deliverable.
+5. Aset (logo, foto, angka, testimoni, nav): tanya dulu atau pakai
    placeholder jujur `[LOGO]` / `[REAL DATA]`. Jangan karang.
-5. Struktur:
+6. Struktur:
    - `src/pages/` route tipis
    - `src/layouts/` shell + SEO + a11y
    - `src/components/ui/` presentational

@@ -57,6 +57,10 @@ const videoSrc =
     transform: translateY(30px);
     animation: hero-in 0.6s ease forwards;
   }
+  #hero-title .wd {
+    display: inline-block;
+    white-space: nowrap;
+  }
   @keyframes hero-in {
     to {
       opacity: 1;
@@ -78,13 +82,13 @@ const videoSrc =
   // Split headline jadi huruf + animasi blur masuk (progresif: tanpa JS tetap tampil)
   const title = document.getElementById('hero-title');
   if (title && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const text = title.textContent ?? '';
+    const words = (title.textContent ?? '').split(' ');
     title.textContent = '';
     let i = 0;
-    for (const word of text.split(' ')) {
+    words.forEach((word, wi) => {
       const w = document.createElement('span');
-      w.style.display = 'inline-block';
-      w.style.whiteSpace = 'nowrap';
+      w.className = 'wd';
+      if (wi < words.length - 1) w.style.marginRight = '0.25em';
       for (const ch of word) {
         const s = document.createElement('span');
         s.className = 'ch';
@@ -94,8 +98,7 @@ const videoSrc =
         i++;
       }
       title.appendChild(w);
-      title.appendChild(document.createTextNode(' '));
-    }
+    });
   }
 
   // Video menyusut + kata HOMIE bergeser saat scroll (satu momen gerak)
