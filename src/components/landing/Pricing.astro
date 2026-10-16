@@ -200,4 +200,31 @@ const properties = [
   document
     .getElementById('prop-next')
     ?.addEventListener('click', () => track?.scrollBy({ left: step() }));
+
+  // Auto-scroll seperti template: berhenti saat disentuh/fokus, mati bila reduced-motion
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (track && !reduce) {
+    let paused = false;
+    let last = performance.now();
+    const tick = (now: number) => {
+      const dt = now - last;
+      last = now;
+      if (!paused) {
+        track.scrollLeft += (dt / 1000) * 40;
+        if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) {
+          track.scrollLeft = 0;
+        }
+      }
+      requestAnimationFrame(tick);
+    };
+    const pause = () => (paused = true);
+    const resume = () => (paused = false);
+    track.addEventListener('pointerenter', pause);
+    track.addEventListener('pointerleave', resume);
+    track.addEventListener('focusin', pause);
+    track.addEventListener('focusout', resume);
+    track.addEventListener('touchstart', pause, { passive: true });
+    track.addEventListener('touchend', resume);
+    requestAnimationFrame(tick);
+  }
 </script>

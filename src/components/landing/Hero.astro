@@ -32,7 +32,7 @@ const videoSrc =
     <div class="mb-12 text-center">
       <h1
         id="hero-title"
-        class="mx-auto mb-6 w-full max-w-6xl px-4 font-serif text-[3.5rem] font-normal leading-tight text-balance sm:text-[4.5rem] md:text-[5.5rem] lg:text-[6.5rem] xl:text-[7.5rem] 2xl:text-[8.5rem]"
+        class="mx-auto mb-6 w-full max-w-6xl px-4 font-serif text-6xl font-bold leading-[0.9] tracking-tighter text-balance text-black lg:text-9xl"
       >
         Find your home away from home
       </h1>
@@ -82,7 +82,7 @@ const videoSrc =
   // Split headline jadi huruf + animasi blur masuk (progresif: tanpa JS tetap tampil)
   const title = document.getElementById('hero-title');
   if (title && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const words = (title.textContent ?? '').split(' ');
+    const words = (title.textContent ?? '').trim().split(/\s+/);
     title.textContent = '';
     let i = 0;
     words.forEach((word, wi) => {

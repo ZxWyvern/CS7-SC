@@ -45,47 +45,49 @@ const rowB = [
     </div>
 
     <div class="space-y-6">
-      <div class="relative">
-        <div class="marquee flex gap-6 overflow-hidden" data-dir="1">
-          {[...rowA, ...rowA].map((t, i) => (
-            <div
-              class="w-full flex-shrink-0 rounded-2xl bg-card p-8 py-4 sm:w-[400px]"
-              aria-hidden={i >= rowA.length}
-            >
-              <div class="mb-6 flex items-start gap-4">
-                <img
-                  src="/placeholder-user.jpg"
-                  alt=""
-                  class="h-12 w-12 rounded-full object-cover"
-                  loading="lazy"
-                />
-                <p class="flex-1 text-lg leading-relaxed text-foreground">“{t.content}”</p>
-              </div>
-              <p class="text-sm font-bold text-foreground">{t.name}</p>
-              <p class="text-xs text-muted-foreground">{t.role}</p>
+      <div class="relative overflow-hidden">
+        <div class="marquee flex w-max" data-dir="1">
+          {[0, 1].map((half) => (
+            <div class="flex gap-6 pr-6" aria-hidden={half === 1}>
+              {rowA.map((t) => (
+                <div class="w-full flex-shrink-0 rounded-2xl bg-card p-8 py-4 sm:w-[400px]">
+                  <div class="mb-6 flex items-start gap-4">
+                    <img
+                      src="/placeholder-user.jpg"
+                      alt=""
+                      class="h-12 w-12 rounded-full object-cover"
+                      loading="lazy"
+                    />
+                    <p class="flex-1 text-lg leading-relaxed text-foreground">“{t.content}”</p>
+                  </div>
+                  <p class="text-sm font-bold text-foreground">{t.name}</p>
+                  <p class="text-xs text-muted-foreground">{t.role}</p>
+                </div>
+              ))}
             </div>
           ))}
         </div>
       </div>
 
-      <div class="relative">
-        <div class="marquee flex gap-6 overflow-hidden" data-dir="-1">
-          {[...rowB, ...rowB].map((t, i) => (
-            <div
-              class="w-full flex-shrink-0 rounded-2xl bg-card p-8 py-4 sm:w-[400px]"
-              aria-hidden={i >= rowB.length}
-            >
-              <div class="mb-6 flex items-start gap-4">
-                <img
-                  src="/placeholder-user.jpg"
-                  alt=""
-                  class="h-12 w-12 rounded-full object-cover"
-                  loading="lazy"
-                />
-                <p class="flex-1 text-lg leading-relaxed text-foreground">“{t.content}”</p>
-              </div>
-              <p class="text-sm font-bold text-foreground">{t.name}</p>
-              <p class="text-sm text-muted-foreground">{t.role}</p>
+      <div class="relative overflow-hidden">
+        <div class="marquee flex w-max" data-dir="-1">
+          {[0, 1].map((half) => (
+            <div class="flex gap-6 pr-6" aria-hidden={half === 1}>
+              {rowB.map((t) => (
+                <div class="w-full flex-shrink-0 rounded-2xl bg-card p-8 py-4 sm:w-[400px]">
+                  <div class="mb-6 flex items-start gap-4">
+                    <img
+                      src="/placeholder-user.jpg"
+                      alt=""
+                      class="h-12 w-12 rounded-full object-cover"
+                      loading="lazy"
+                    />
+                    <p class="flex-1 text-lg leading-relaxed text-foreground">“{t.content}”</p>
+                  </div>
+                  <p class="text-sm font-bold text-foreground">{t.name}</p>
+                  <p class="text-sm text-muted-foreground">{t.role}</p>
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -113,7 +115,6 @@ const rowB = [
   @media (prefers-reduced-motion: reduce) {
     .marquee {
       animation: none;
-      overflow-x: auto;
     }
   }
 </style>
