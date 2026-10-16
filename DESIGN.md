@@ -1,18 +1,12 @@
-# DESIGN.md - CS7-SC (BELUM DIISI)
+# DESIGN.md - Landing Homie (port ke Astro)
 
-> Wajib diisi sebelum poles UI (R-37). Tanpa ini, semua UI = draft without direction.
+Arah dari template Homie yang dipilih owner. Filter antislop tetap jalan di atasnya.
 
-Isi singkat:
+- Identitas: marketplace sewa rumah antar individu, nada tenang dan manusiawi, Inggris (ikuti template)
+- Palet: Putih hangat #FAFAFA, Tinta #1A1A1A, Abu #737373, Aksen Emerald #10B981, Biru #3B82F6, Ungu #8B5CF6, Amber #F59E0B (aksen hanya untuk chart/status, bukan dekorasi halaman)
+- Tipografi: Inter untuk body/UI, Playfair Display untuk headline serif, Geist Mono untuk label data. Alasan: serif memberi rasa editorial properti, sans menjaga keterbacaan form.
+- Dial: ENERGY 3 / RHYTHM 3 / MOTION 2
+- Motif: 1 kata display raksasa sebagai backdrop section (MISSION, MANAGE, HOMIE) + kartu rounded-3xl. Satu elemen memorable per layar: video hero yang menyusut saat scroll.
+- Wireframe: Header pil melayang, Hero video + HOMIE raksasa + headline serif, Stats 3 angka, Mission + 3 layanan, Manage + kartu aktivitas, Properti carousel, CTA + chart, Testimoni 2 baris jalan, FAQ akordeon, Footer + HOMIE raksasa.
 
-- Identitas: nama kelas, sifat (misal: santai, rapi, berani), mood
-- Palet: 4-6 hex bernama (base + aksen 1)
-- Tipografi: 1-2 family + peran (headline/body) + alasan
-- Dial: ENERGY _ / RHYTHM _ / MOTION _ (1 calm, 2 balanced, 3 bold)
-- Motif: 1 pola/gesture khas yang diulang
-- Contoh wireframe ASCII 1 halaman
-
-Contoh (hapus, ganti punyamu):
-
-- Palet: Putih #FFFFFF, Tinta #111111, Abu #666666, Aksen Biru #1D4ED8
-- Type: system-ui body, sans tegas headline, alasan: terbaca di HP murah
-- Dial: ENERGY 1 / RHYTHM 2 / MOTION 1
+Catatan jujur (R-17/R-18): angka stats dan testimoni di template ini data demo bawaan template, bukan data nyata. Sebelum dipakai sebagai produk sungguhan, ganti dengan data terverifikasi atau tandai demo.

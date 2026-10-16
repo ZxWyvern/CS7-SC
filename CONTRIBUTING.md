@@ -15,6 +15,9 @@ tanpa izin tertulis.
 
 1. Ambil issue / bikin branch dari `master`:
    `git checkout -b feat/nama-singkat` atau `fix/nama-singkat`
+2. Commit setiap perubahan di local dulu sebelum push ke origin.
+   Satu commit = satu tujuan, pesan jelas. Push ke `origin` hanya
+   setelah semua cek lokal hijau.
 2. Frontend saja, tanpa backend. Jangan tambah auth, database, API server.
 3. Kalau ubah UI, isi `DESIGN.md` dulu. Tanpa arah = draft, bukan deliverable.
 4. Aset (logo, foto, angka, testimoni, nav): tanya dulu atau pakai
