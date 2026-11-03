@@ -126,6 +126,8 @@ go run ./cmd/api create-user --email EMAIL --name "NAMA" --role admin --generate
 - API Go belum diuji terhadap PostgreSQL asli; baru diuji dengan fake store di unit test.
 - `/akun` adalah halaman statis dengan guard client-side. Data sensitif tetap hanya dari API.
 - Rate limit disimpan di memori; cocok untuk satu instance API, reset saat restart.
+- `package.json` memakai override `minimatch` ke `^11.0.1` untuk menutup GHSA-g3hv-75wg-m249. Hapus override setelah ESLint dan typescript-eslint mendukung minimatch 11 secara resmi, lalu jalankan ulang lint.
+- Di mesin Windows ini, npm 12 dengan config global `allow-scripts` membuat `npm run audit` gagal `EALLOWSCRIPTS`. Verifikasi audit dengan `npx npm@10 audit --audit-level=moderate`; CI memakai npm 10.
 - Port database dipublish ke `127.0.0.1:5432` untuk kebutuhan development. Hapus mapping tersebut di server produksi jika tidak diperlukan.
 - Caddy butuh port `80` dan `443` benar-benar bebas. Port `443` saat ini menunjukkan layanan Amazon Chime, jadi wajib dicek sebelum deploy.
 - `dist/` tidak masuk git. Build ulang sebelum deploy atau upload artefak hasil build.
