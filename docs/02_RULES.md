@@ -20,6 +20,18 @@
 - Liveliness: set dial ENERGY/RHYTHM/MOTION di DESIGN.md, 1 focal point per layar.
 - frontend-design: 1 elemen memorable, sisanya disiplin. Rencana token 4-6 hex + tipografi + wireframe ASCII sebelum koding.
 
+## Aturan Backend (Go + PostgreSQL)
+
+- Password hanya disimpan sebagai hash Argon2id. Jangan pernah log atau kirim password.
+- Sesi: token acak 32 byte, disimpan sebagai SHA-256 di database, cookie HttpOnly + Secure + SameSite=Strict.
+- Login wajib rate-limited; pesan error login tidak boleh membocorkan email terdaftar.
+- Semua query pakai parameter (`$1`, `$2`), tanpa string concatenation.
+- Rahasia hanya di `.env` server (mode 600). `.env` tidak pernah di-commit.
+- HTTPS wajib di produksi. Jangan set `COOKIE_SECURE=false` di server publik.
+- Endpoint auth mengembalikan `Cache-Control: no-store`.
+- Perubahan skema: tambah file migrasi baru, jangan edit migrasi yang sudah jalan.
+- `go test ./...` dan `go vet ./...` wajib hijau.
+
 ## Workflow
 
 - Semua PR wajib hijau: lint, test, deps, build.

@@ -1,0 +1,199 @@
+---
+---
+
+<form
+  id="login-form"
+  class="mt-8 rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8"
+  method="post"
+  action="/api/auth/login"
+  novalidate
+>
+  <div>
+    <label for="email" class="block text-sm font-medium text-foreground">
+      Email
+    </label>
+    <input
+      id="email"
+      name="email"
+      type="email"
+      inputmode="email"
+      autocomplete="username"
+      autocapitalize="none"
+      spellcheck="false"
+      maxlength="254"
+      required
+      aria-describedby="email-error"
+      class="mt-2 block min-h-11 w-full rounded-xl border border-zinc-500 bg-white px-4 py-2.5 text-base text-foreground placeholder:text-zinc-500 focus-visible:border-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+    />
+    <p id="email-error" class="mt-2 hidden text-sm font-medium text-destructive"></p>
+  </div>
+
+  <div class="mt-5">
+    <label for="password" class="block text-sm font-medium text-foreground">
+      Kata sandi
+    </label>
+    <div class="relative mt-2">
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        maxlength="128"
+        required
+        aria-describedby="password-error"
+        class="block min-h-11 w-full rounded-xl border border-zinc-500 bg-white py-2.5 pl-4 pr-28 text-base text-foreground focus-visible:border-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+      />
+      <button
+        id="toggle-password"
+        type="button"
+        class="absolute inset-y-0 right-0 flex min-h-11 min-w-11 items-center px-3 text-sm font-medium text-foreground underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+        aria-controls="password"
+        aria-pressed="false"
+        aria-label="Tampilkan kata sandi"
+      >
+        Tampilkan
+      </button>
+    </div>
+    <p id="password-error" class="mt-2 hidden text-sm font-medium text-destructive"></p>
+  </div>
+
+  <p id="login-status" role="status" aria-live="polite" class="mt-4 hidden text-sm font-medium"></p>
+
+  <button
+    id="login-submit"
+    type="submit"
+    class="mt-6 flex min-h-11 w-full items-center justify-center rounded-xl bg-foreground px-4 py-3 text-sm font-semibold text-background transition-colors hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground disabled:cursor-not-allowed disabled:bg-zinc-600"
+  >
+    Masuk
+  </button>
+</form>
+
+<script>
+  import { hasErrors, safeNextPath, validateLoginValues } from '../../lib/login';
+
+  const form = document.getElementById('login-form') as HTMLFormElement | null;
+  const email = document.getElementById('email') as HTMLInputElement | null;
+  const password = document.getElementById('password') as HTMLInputElement | null;
+  const emailError = document.getElementById('email-error');
+  const passwordError = document.getElementById('password-error');
+  const status = document.getElementById('login-status');
+  const toggle = document.getElementById('toggle-password');
+  const submit = document.getElementById('login-submit') as HTMLButtonElement | null;
+
+  function showError(input: HTMLInputElement, error: HTMLElement | null, message: string) {
+    input.setAttribute('aria-invalid', 'true');
+    if (!error) return;
+    error.textContent = message;
+    error.classList.remove('hidden');
+  }
+
+  function clearError(input: HTMLInputElement, error: HTMLElement | null) {
+    input.removeAttribute('aria-invalid');
+    if (!error) return;
+    error.textContent = '';
+    error.classList.add('hidden');
+  }
+
+  function hideStatus() {
+    if (!status) return;
+    status.textContent = '';
+    status.classList.add('hidden');
+    status.classList.remove('text-destructive', 'text-muted-foreground');
+  }
+
+  function showStatus(message: string) {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.remove('hidden', 'text-muted-foreground');
+    status.classList.add('text-destructive');
+  }
+
+  function setBusy(busy: boolean) {
+    if (submit) {
+      submit.disabled = busy;
+      submit.textContent = busy ? 'Memeriksa...' : 'Masuk';
+    }
+    form?.setAttribute('aria-busy', String(busy));
+  }
+
+  email?.addEventListener('input', () => clearError(email, emailError));
+  password?.addEventListener('input', () => clearError(password, passwordError));
+
+  toggle?.addEventListener('click', () => {
+    if (!password) return;
+    const reveal = password.type === 'password';
+    password.type = reveal ? 'text' : 'password';
+    toggle.textContent = reveal ? 'Sembunyikan' : 'Tampilkan';
+    toggle.setAttribute('aria-pressed', String(reveal));
+    toggle.setAttribute('aria-label', reveal ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
+  });
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!email || !password) return;
+
+    hideStatus();
+    clearError(email, emailError);
+    clearError(password, passwordError);
+
+    const errors = validateLoginValues({ email: email.value, password: password.value });
+    let firstInvalid: HTMLInputElement | null = null;
+
+    if (errors.email) {
+      showError(email, emailError, errors.email);
+      firstInvalid = email;
+    }
+    if (errors.password) {
+      showError(password, passwordError, errors.password);
+      firstInvalid ??= password;
+    }
+
+    if (hasErrors(errors) && firstInvalid) {
+      firstInvalid.focus();
+      return;
+    }
+
+    setBusy(true);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.value.trim(), password: password.value }),
+      });
+
+      if (response.ok) {
+        const next = new URLSearchParams(window.location.search).get('next');
+        window.location.assign(safeNextPath(next));
+        return;
+      }
+
+      const data = (await response.json().catch(() => ({}))) as { error?: string };
+
+      if (response.status === 401) {
+        showStatus(data.error ?? 'Email atau kata sandi salah.');
+      } else if (response.status === 429) {
+        const retryAfter = Number(response.headers.get('Retry-After') ?? '0');
+        const wait =
+          retryAfter > 0
+            ? retryAfter < 60
+              ? `${retryAfter} detik`
+              : `${Math.ceil(retryAfter / 60)} menit`
+            : null;
+        showStatus(
+          wait
+            ? `Terlalu banyak percobaan. Coba lagi dalam ${wait}.`
+            : 'Terlalu banyak percobaan. Coba lagi nanti.'
+        );
+      } else if (response.status === 400 || response.status === 415) {
+        showStatus(data.error ?? 'Permintaan tidak valid.');
+      } else {
+        showStatus('Tidak bisa masuk sekarang. Coba lagi.');
+      }
+    } catch {
+      showStatus('Tidak bisa menghubungi server. Periksa koneksi lalu coba lagi.');
+    } finally {
+      setBusy(false);
+    }
+  });
+</script>

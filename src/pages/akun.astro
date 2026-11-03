@@ -1,0 +1,189 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+---
+
+<LandingLayout title="Akun - CS7-SC" description="Akun kelas CS7-SC.">
+  <div class="relative flex min-h-screen flex-col overflow-hidden">
+    <div
+      class="pointer-events-none absolute bottom-0 left-0 right-0 z-0 flex w-full items-end justify-center overflow-hidden"
+      aria-hidden="true"
+    >
+      <span class="word-glass block select-none text-center text-[30vw] font-bold leading-none tracking-tighter sm:text-[26vw] lg:text-[22vw]">
+        AKUN
+      </span>
+    </div>
+
+    <header class="relative z-10 px-6 pt-6">
+      <div class="mx-auto flex max-w-6xl items-center justify-between gap-4">
+        <a
+          href="/"
+          class="inline-flex min-h-11 items-center gap-2 rounded-lg"
+          aria-label="CS7-SC, kembali ke beranda"
+        >
+          <svg
+            class="h-6 w-6 text-black"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M22 10 12 5 2 10v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2z"></path>
+            <path d="M6 22V10"></path>
+            <path d="M18 22V10"></path>
+            <path d="M10 22v-4h4v4"></path>
+          </svg>
+          <span class="text-lg font-medium tracking-tight text-black">CS7-SC</span>
+        </a>
+        <a
+          href="/"
+          class="inline-flex min-h-11 items-center text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        >
+          Kembali ke beranda
+        </a>
+      </div>
+    </header>
+
+    <main id="main" class="relative z-10 flex flex-1 items-center justify-center px-6 py-14">
+      <section class="w-full max-w-md" aria-labelledby="account-title">
+        <h1
+          id="account-title"
+          class="font-serif text-5xl font-bold leading-none tracking-tight text-foreground sm:text-6xl"
+        >
+          Akun
+        </h1>
+
+        <p id="account-status" role="status" aria-live="polite" class="mt-4 text-muted-foreground">
+          Memeriksa sesi...
+        </p>
+
+        <div
+          id="account-panel"
+          class="mt-8 hidden rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8"
+        >
+          <dl class="space-y-5">
+            <div>
+              <dt class="text-sm text-muted-foreground">Nama</dt>
+              <dd id="account-name" class="mt-1 font-medium text-foreground"></dd>
+            </div>
+            <div>
+              <dt class="text-sm text-muted-foreground">Email</dt>
+              <dd id="account-email" class="mt-1 font-medium text-foreground"></dd>
+            </div>
+            <div>
+              <dt class="text-sm text-muted-foreground">Peran</dt>
+              <dd id="account-role" class="mt-1 font-medium text-foreground"></dd>
+            </div>
+          </dl>
+
+          <button
+            id="logout-button"
+            type="button"
+            class="mt-8 flex min-h-11 w-full items-center justify-center rounded-xl border border-zinc-500 bg-white px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground disabled:cursor-not-allowed disabled:text-zinc-500"
+          >
+            Keluar
+          </button>
+        </div>
+
+        <div
+          id="account-error"
+          class="mt-8 hidden rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8"
+        >
+          <p class="text-sm leading-relaxed text-foreground">
+            Tidak bisa memeriksa sesi sekarang. Periksa koneksi lalu coba lagi.
+          </p>
+          <button
+            id="retry-button"
+            type="button"
+            class="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl border border-zinc-500 px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+          >
+            Coba lagi
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+</LandingLayout>
+
+<script>
+  interface AccountUser {
+    name: string;
+    email: string;
+    role: string;
+  }
+
+  const status = document.getElementById('account-status');
+  const panel = document.getElementById('account-panel');
+  const errorPanel = document.getElementById('account-error');
+  const name = document.getElementById('account-name');
+  const email = document.getElementById('account-email');
+  const role = document.getElementById('account-role');
+  const logout = document.getElementById('logout-button') as HTMLButtonElement | null;
+  const retry = document.getElementById('retry-button');
+
+  function showStatus(message: string) {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.remove('hidden');
+  }
+
+  function hideStatus() {
+    status?.classList.add('hidden');
+  }
+
+  async function loadAccount() {
+    errorPanel?.classList.add('hidden');
+    panel?.classList.add('hidden');
+    showStatus('Memeriksa sesi...');
+
+    try {
+      const response = await fetch('/api/auth/me', {
+        credentials: 'same-origin',
+        headers: { Accept: 'application/json' },
+      });
+
+      if (response.status === 401) {
+        window.location.replace('/masuk?next=/akun');
+        return;
+      }
+      if (!response.ok) {
+        throw new Error('request gagal');
+      }
+
+      const data = (await response.json()) as { user: AccountUser };
+
+      if (name) name.textContent = data.user.name;
+      if (email) email.textContent = data.user.email;
+      if (role) role.textContent = data.user.role === 'admin' ? 'Pengurus' : 'Anggota';
+
+      hideStatus();
+      panel?.classList.remove('hidden');
+    } catch {
+      hideStatus();
+      errorPanel?.classList.remove('hidden');
+    }
+  }
+
+  logout?.addEventListener('click', async () => {
+    logout.disabled = true;
+    logout.textContent = 'Keluar...';
+
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'same-origin',
+      });
+      window.location.assign('/masuk');
+    } catch {
+      logout.disabled = false;
+      logout.textContent = 'Keluar';
+      showStatus('Tidak bisa keluar. Periksa koneksi lalu coba lagi.');
+    }
+  });
+
+  retry?.addEventListener('click', () => {
+    void loadAccount();
+  });
+
+  void loadAccount();
+</script>

@@ -1,0 +1,5 @@
+.git
+api
+*.exe
+Dockerfile
+.dockerignore

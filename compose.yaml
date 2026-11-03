@@ -1,0 +1,101 @@
+name: cs7-sc
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cs7
+      POSTGRES_USER: cs7
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?isi POSTGRES_PASSWORD di .env}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=64MB
+      - -c
+      - max_connections=20
+      - -c
+      - work_mem=2MB
+      - -c
+      - maintenance_work_mem=32MB
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./server/migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U cs7 -d cs7']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 320m
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  api:
+    build:
+      context: ./server
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://cs7:${POSTGRES_PASSWORD:?isi POSTGRES_PASSWORD di .env}@db:5432/cs7?sslmode=disable
+      APP_ORIGIN: https://${DOMAIN:?isi DOMAIN di .env}
+      LISTEN_ADDR: ':8080'
+      COOKIE_SECURE: 'true'
+      TRUST_PROXY: 'true'
+    depends_on:
+      db:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 128m
+    stop_grace_period: 15s
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:8080/api/health >/dev/null || exit 1']
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      DOMAIN: ${DOMAIN:?isi DOMAIN di .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./dist:/srv:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+    mem_limit: 96m
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+volumes:
+  db_data:
+  caddy_data:
+  caddy_config:

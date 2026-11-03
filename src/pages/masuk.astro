@@ -1,0 +1,63 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+import LoginForm from '../components/ui/LoginForm.astro';
+---
+
+<LandingLayout title="Masuk - CS7-SC" description="Halaman masuk akun kelas CS7-SC.">
+  <div class="relative flex min-h-screen flex-col overflow-hidden">
+    <div
+      class="pointer-events-none absolute bottom-0 left-0 right-0 z-0 flex w-full items-end justify-center overflow-hidden"
+      aria-hidden="true"
+    >
+      <span class="word-glass block select-none text-center text-[30vw] font-bold leading-none tracking-tighter sm:text-[26vw] lg:text-[22vw]">
+        MASUK
+      </span>
+    </div>
+
+    <header class="relative z-10 px-6 pt-6">
+      <div class="mx-auto flex max-w-6xl items-center justify-between gap-4">
+        <a
+          href="/"
+          class="inline-flex min-h-11 items-center gap-2 rounded-lg"
+          aria-label="CS7-SC, kembali ke beranda"
+        >
+          <svg
+            class="h-6 w-6 text-black"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M22 10 12 5 2 10v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2z"></path>
+            <path d="M6 22V10"></path>
+            <path d="M18 22V10"></path>
+            <path d="M10 22v-4h4v4"></path>
+          </svg>
+          <span class="text-lg font-medium tracking-tight text-black">CS7-SC</span>
+        </a>
+        <a
+          href="/"
+          class="inline-flex min-h-11 items-center text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        >
+          Kembali ke beranda
+        </a>
+      </div>
+    </header>
+
+    <main id="main" class="relative z-10 flex flex-1 items-center justify-center px-6 py-14">
+      <section class="w-full max-w-md" aria-labelledby="login-title">
+        <h1
+          id="login-title"
+          class="font-serif text-5xl font-bold leading-none tracking-tight text-foreground sm:text-6xl"
+        >
+          Masuk
+        </h1>
+        <p class="mt-4 max-w-sm leading-relaxed text-muted-foreground">
+          Masuk dengan akun yang dibuat pengurus kelas.
+        </p>
+        <LoginForm />
+      </section>
+    </main>
+  </div>
+</LandingLayout>

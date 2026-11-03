@@ -1,4 +1,4 @@
-# AGENTS.md - CS7-SC (Frontend Only, Astro)
+# AGENTS.md - CS7-SC (Astro + Go Auth)
 
 Baca `docs/00_SSOT.md` + `docs/01_CONTEXT.md` + `docs/02_RULES.md` dulu. SSOT menang.
 
@@ -12,15 +12,17 @@ Baca `docs/00_SSOT.md` + `docs/01_CONTEXT.md` + `docs/02_RULES.md` dulu. SSOT me
 - Aksesibilitas: `antislop-human` (kontras + keyboard + focus)
 - Mobile/responsive: `antislop-layoutmobile`
 - Cari docs library: `find-docs` (`npx ctx7@latest ...`)
-- Arsitektur backend: JANGAN. Frontend only sampai disetujui.
+- Backend/auth: Go standar library + pgx + PostgreSQL, lihat `server/` dan `docs/02_RULES.md`. Jangan tambah framework berat atau layanan eksternal tanpa persetujuan.
 
 ## Aturan Main
 
-- Bahasa: Astro + TS strict. Tanpa backend.
+- Bahasa: Astro + TS strict untuk web, Go untuk API auth.
 - Sebelum UI: isi `DESIGN.md` atau output = draft without direction (ENERGY 1/RHYTHM 1/MOTION 1).
 - Sebelum aset (logo/avatar/angka/testimoni/nav): tanya dulu atau placeholder jujur `[LOGO]`, `[REAL DATA]`.
-- Setiap PR: `npm run lint`, `npm run format:check`, `npm run test`, `npm run build` harus hijau.
-- Struktur: pages tipis, layouts shell, components/ui presentational, lib pure + test.
+- Setiap PR: `npm run lint`, `npm run format:check`, `npm run test`, `npm run build` hijau.
+- Setiap perubahan backend: `cd server && go test ./... && go vet ./...`.
+- Struktur: pages tipis, layouts shell, components/ui presentational, lib pure + test. Backend di `server/`, deploy di `compose.yaml` + `deploy/`.
+- Rahasia (password DB, kredensial) hanya di `.env` server, tidak pernah di repo. HTTPS wajib untuk cookie sesi.
 
 <!-- antislop:start -->
 
