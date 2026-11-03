@@ -70,6 +70,32 @@ html {
   }
 }
 
+/* Kata backdrop gaya kaca bening: isian gradient translucent + rim + kedalaman.
+   Tanpa backdrop-blur: kata berada di belakang konten opaque, blur tidak terlihat. */
+.word-glass {
+  color: oklch(0.955 0 0);
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .word-glass {
+    --glass-sheen: oklch(1 0 0 / 0.85);
+    --glass-body: oklch(0.93 0 0 / 0.4);
+    --glass-rim: oklch(1 0 0 / 0.75);
+    --glass-depth: oklch(0.4 0 0 / 0.09);
+    color: transparent;
+    background-image: linear-gradient(
+      175deg,
+      var(--glass-sheen) 0%,
+      var(--glass-body) 38%,
+      var(--glass-body) 62%,
+      var(--glass-sheen) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-stroke: 1px var(--glass-rim);
+    filter: drop-shadow(0 16px 20px var(--glass-depth));
+  }
+}
+
 /* Reveal on scroll — 1 momen per section, bukan animasi template */
 .reveal {
   opacity: 0;
