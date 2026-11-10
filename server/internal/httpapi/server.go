@@ -170,15 +170,12 @@ func (s *Server) withSameOrigin(next http.Handler) http.Handler {
 }
 
 func (s *Server) clientIP(r *http.Request) string {
-	if s.cfg.TrustProxy {
-		if forwarded := r.Header.Get("X-Forwarded-For"); forwarded != "" {
-			if index := strings.IndexByte(forwarded, ','); index >= 0 {
-				return strings.TrimSpace(forwarded[:index])
+	if hops := s.cfg.TrustedProxyHops; hops > 0 {
+		parts := strings.Split(r.Header.Get("X-Forwarded-For"), ",")
+		if index := len(parts) - hops; index >= 0 {
+			if ip := net.ParseIP(strings.TrimSpace(parts[index])); ip != nil {
+				return maskIPv6To64(ip)
 			}
-			return strings.TrimSpace(forwarded)
-		}
-		if realIP := r.Header.Get("X-Real-IP"); realIP != "" {
-			return strings.TrimSpace(realIP)
 		}
 	}
 
@@ -187,6 +184,18 @@ func (s *Server) clientIP(r *http.Request) string {
 		return r.RemoteAddr
 	}
 	return host
+}
+
+func maskIPv6To64(ip net.IP) string {
+	if ip.To4() == nil {
+		if v6 := ip.To16(); len(v6) == net.IPv6len {
+			masked := make([]byte, net.IPv6len)
+			copy(masked, v6)
+			clear(masked[8:])
+			return net.IP(masked).String()
+		}
+	}
+	return ip.String()
 }
 
 func decodeJSON(w http.ResponseWriter, r *http.Request, destination any) error {

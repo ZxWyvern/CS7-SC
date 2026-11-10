@@ -46,7 +46,7 @@ services:
       APP_ORIGIN: https://${DOMAIN:?isi DOMAIN di .env}
       LISTEN_ADDR: ':8080'
       COOKIE_SECURE: 'true'
-      TRUST_PROXY: 'true'
+      TRUSTED_PROXY_HOPS: '1'
     depends_on:
       db:
         condition: service_healthy

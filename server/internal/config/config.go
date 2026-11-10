@@ -17,7 +17,7 @@ type Config struct {
 	CookieName       string
 	SessionTTL       time.Duration
 	CookieSecure     bool
-	TrustProxy       bool
+	TrustedProxyHops int
 	ArgonMemory      uint32
 	ArgonIterations  uint32
 	ArgonParallelism uint8
@@ -59,11 +59,11 @@ func Load() (Config, error) {
 	}
 	cfg.CookieSecure = cookieSecure
 
-	trustProxy, err := boolEnv("TRUST_PROXY", false)
+	trustedProxyHops, err := intEnv("TRUSTED_PROXY_HOPS", 0, 0, 8)
 	if err != nil {
 		return Config{}, err
 	}
-	cfg.TrustProxy = trustProxy
+	cfg.TrustedProxyHops = trustedProxyHops
 
 	if raw := os.Getenv("SESSION_TTL"); raw != "" {
 		ttl, err := time.ParseDuration(raw)
@@ -91,6 +91,18 @@ func boolEnv(key string, fallback bool) (bool, error) {
 	value, err := strconv.ParseBool(raw)
 	if err != nil {
 		return false, fmt.Errorf("%s harus true atau false", key)
+	}
+	return value, nil
+}
+
+func intEnv(key string, fallback, minimum, maximum int) (int, error) {
+	raw := strings.TrimSpace(os.Getenv(key))
+	if raw == "" {
+		return fallback, nil
+	}
+	value, err := strconv.Atoi(raw)
+	if err != nil || value < minimum || value > maximum {
+		return 0, fmt.Errorf("%s harus angka antara %d dan %d", key, minimum, maximum)
 	}
 	return value, nil
 }
