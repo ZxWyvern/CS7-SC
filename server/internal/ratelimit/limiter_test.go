@@ -113,10 +113,10 @@ func TestLimiterCountTracksCurrentWindow(t *testing.T) {
 
 func TestLimiterConcurrentAllow(t *testing.T) {
 	const (
-		workers    = 64
-		attempts   = 40
-		separator  = 8
-		limit      = 3
+		workers   = 64
+		attempts  = 40
+		separator = 8
+		limit     = 3
 	)
 	limiter, _ := newTestLimiter(t, limit, time.Minute)
 
