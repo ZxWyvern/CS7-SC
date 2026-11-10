@@ -390,3 +390,37 @@ func TestHashBusyError(t *testing.T) {
 		t.Fatal("DeadlineExceeded harus dianggap busy")
 	}
 }
+
+func TestUserFromContextWithoutValue(t *testing.T) {
+	if _, ok := userFromContext(context.Background()); ok {
+		t.Fatal("context tanpa nilai harus tidak ada user")
+	}
+}
+
+func TestMeShortCookieGivesClearCookie(t *testing.T) {
+	server, _, _ := testServer(t)
+
+	response := performJSON(server, http.MethodGet, "/api/auth/me", nil,
+		&http.Cookie{Name: "cs7_session", Value: "terpendek"}, "")
+
+	if response.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, mau 401", response.Code)
+	}
+
+	cookies := response.Result().Cookies()
+	if len(cookies) == 0 {
+		t.Fatal("harus ada cookie perata untuk menghapus sesi")
+	}
+	if cookies[0].Name != "cs7_session" || cookies[0].MaxAge >= 0 {
+		t.Fatalf("cookie penghapus salah: %+v", cookies)
+	}
+}
+
+func TestLogoutWithoutCookie(t *testing.T) {
+	server, _, _ := testServer(t)
+
+	response := performJSON(server, http.MethodPost, "/api/auth/logout", nil, nil, "http://localhost:4321")
+	if response.Code != http.StatusNoContent {
+		t.Fatalf("status = %d, mau 204", response.Code)
+	}
+}

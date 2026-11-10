@@ -158,15 +158,9 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleMe(w http.ResponseWriter, r *http.Request) {
-	user, err := s.currentUser(r)
-	if errors.Is(err, store.ErrNotFound) {
-		s.clearSessionCookie(w)
+	user, ok := userFromContext(r.Context())
+	if !ok {
 		writeError(w, http.StatusUnauthorized, "Belum masuk.")
-		return
-	}
-	if err != nil {
-		s.logger.Error("membaca sesi", "error", err)
-		writeError(w, http.StatusInternalServerError, "Terjadi kesalahan pada server.")
 		return
 	}
 

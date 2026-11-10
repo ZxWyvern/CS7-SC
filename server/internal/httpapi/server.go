@@ -77,7 +77,7 @@ func New(cfg config.Config, st SessionStore, hasher *auth.Hasher, logger *slog.L
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/auth/login", server.handleLogin)
 	mux.HandleFunc("POST /api/auth/logout", server.handleLogout)
-	mux.HandleFunc("GET /api/auth/me", server.handleMe)
+	mux.Handle("GET /api/auth/me", server.requireAuth(http.HandlerFunc(server.handleMe)))
 	mux.HandleFunc("GET /api/health", server.handleHealth)
 
 	server.handler = server.withRecovery(
