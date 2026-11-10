@@ -31,6 +31,23 @@ func toPublicUser(user store.User) publicUser {
 	}
 }
 
+const (
+	loginDelayBase = 250 * time.Millisecond
+	loginDelayMax  = 2 * time.Second
+	loginDelayFrom = 8
+)
+
+func loginDelay(attempts int) time.Duration {
+	excess := attempts - loginDelayFrom
+	if excess < 1 {
+		return 0
+	}
+	if excess >= 8 {
+		return loginDelayMax
+	}
+	return min(loginDelayBase<<(excess-1), loginDelayMax)
+}
+
 func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	if !isJSON(r) {
 		writeError(w, http.StatusUnsupportedMediaType, "Content-Type harus application/json.")
@@ -55,15 +72,25 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	priorAttempts := s.emailLimiter.Count(email)
+	if allowed, retryAfter := s.emailLimiter.Allow(email); !allowed {
+		s.tooManyRequests(w, retryAfter)
+		return
+	}
+
 	accountKey := ip + "|" + email
 	if allowed, retryAfter := s.accountLimiter.Allow(accountKey); !allowed {
 		s.tooManyRequests(w, retryAfter)
 		return
 	}
 
+	if delay := loginDelay(priorAttempts + 1); delay > 0 {
+		s.sleep(delay)
+	}
+
 	user, err := s.store.UserByEmail(r.Context(), email)
 	if errors.Is(err, store.ErrNotFound) {
-		_, _ = s.verifyPassword(request.Password, s.dummyHash)
+		_, _ = s.verifyPassword(r.Context(), request.Password, s.dummyHash)
 		s.logger.Info("login gagal", "ip", ip)
 		writeError(w, http.StatusUnauthorized, "Email atau kata sandi salah.")
 		return
@@ -74,7 +101,11 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	valid, err := s.verifyPassword(request.Password, user.PasswordHash)
+	valid, err := s.verifyPassword(r.Context(), request.Password, user.PasswordHash)
+	if hashBusyError(err) {
+		writeError(w, http.StatusServiceUnavailable, "Server sedang sibuk. Coba lagi nanti.")
+		return
+	}
 	if err != nil {
 		s.logger.Error("verifikasi kata sandi", "error", err)
 		writeError(w, http.StatusInternalServerError, "Terjadi kesalahan pada server.")
@@ -85,9 +116,6 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusUnauthorized, "Email atau kata sandi salah.")
 		return
 	}
-
-	s.ipLimiter.Reset(ip)
-	s.accountLimiter.Reset(accountKey)
 
 	token, tokenHash, err := auth.NewSessionToken()
 	if err != nil {
@@ -130,15 +158,9 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleMe(w http.ResponseWriter, r *http.Request) {
-	user, err := s.currentUser(r)
-	if errors.Is(err, store.ErrNotFound) {
-		s.clearSessionCookie(w)
+	user, ok := userFromContext(r.Context())
+	if !ok {
 		writeError(w, http.StatusUnauthorized, "Belum masuk.")
-		return
-	}
-	if err != nil {
-		s.logger.Error("membaca sesi", "error", err)
-		writeError(w, http.StatusInternalServerError, "Terjadi kesalahan pada server.")
 		return
 	}
 

@@ -49,12 +49,15 @@ func main() {
 		os.Exit(1)
 	}
 
+	logger.Info("audit", "action", "server_start", "ip", "internal")
+
 	hasher := auth.NewHasher(cfg.ArgonMemory, cfg.ArgonIterations, cfg.ArgonParallelism)
 	api, err := httpapi.New(cfg, db, hasher, logger)
 	if err != nil {
 		logger.Error("menyiapkan server", "error", err)
 		os.Exit(1)
 	}
+	api.StartLimiterSweeper(ctx)
 
 	server := &http.Server{
 		Addr:              cfg.Addr,
@@ -88,8 +91,13 @@ func main() {
 			logger.Error("menghentikan server", "error", err)
 			os.Exit(1)
 		}
+		logger.Info("audit", "action", "server_stop", "ip", "internal")
 		logger.Info("server berhenti dengan rapi")
 	}
+}
+
+func audit(logger *slog.Logger, action, subject, ip string) {
+	logger.Info("audit", "action", action, "subject", subject, "ip", ip)
 }
 
 func cleanupSessions(ctx context.Context, db *store.Store, logger *slog.Logger) {

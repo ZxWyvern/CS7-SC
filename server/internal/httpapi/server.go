@@ -24,6 +24,8 @@ import (
 
 const maxBodyBytes = 64 << 10
 
+const hashWaitTimeout = 5 * time.Second
+
 type SessionStore interface {
 	UserByEmail(ctx context.Context, email string) (store.User, error)
 	CreateSession(ctx context.Context, userID string, tokenHash []byte, expiresAt time.Time, ip, userAgent string) error
@@ -40,8 +42,10 @@ type Server struct {
 	logger         *slog.Logger
 	ipLimiter      *ratelimit.Limiter
 	accountLimiter *ratelimit.Limiter
+	emailLimiter   *ratelimit.Limiter
 	dummyHash      string
 	hashSlots      chan struct{}
+	sleep          func(time.Duration)
 	handler        http.Handler
 	now            func() time.Time
 }
@@ -63,15 +67,17 @@ func New(cfg config.Config, st SessionStore, hasher *auth.Hasher, logger *slog.L
 		logger:         logger,
 		ipLimiter:      ratelimit.New(30, 15*time.Minute),
 		accountLimiter: ratelimit.New(8, 15*time.Minute),
+		emailLimiter:   ratelimit.New(30, 15*time.Minute),
 		dummyHash:      dummyHash,
 		hashSlots:      make(chan struct{}, 2),
+		sleep:          time.Sleep,
 		now:            time.Now,
 	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/auth/login", server.handleLogin)
 	mux.HandleFunc("POST /api/auth/logout", server.handleLogout)
-	mux.HandleFunc("GET /api/auth/me", server.handleMe)
+	mux.Handle("GET /api/auth/me", server.requireAuth(http.HandlerFunc(server.handleMe)))
 	mux.HandleFunc("GET /api/health", server.handleHealth)
 
 	server.handler = server.withRecovery(
@@ -87,6 +93,12 @@ func New(cfg config.Config, st SessionStore, hasher *auth.Hasher, logger *slog.L
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.handler.ServeHTTP(w, r)
+}
+
+func (s *Server) StartLimiterSweeper(ctx context.Context) {
+	s.ipLimiter.StartSweeping(ctx, 15*time.Minute)
+	s.accountLimiter.StartSweeping(ctx, 15*time.Minute)
+	s.emailLimiter.StartSweeping(ctx, 15*time.Minute)
 }
 
 func (s *Server) withRecovery(next http.Handler) http.Handler {
@@ -164,15 +176,12 @@ func (s *Server) withSameOrigin(next http.Handler) http.Handler {
 }
 
 func (s *Server) clientIP(r *http.Request) string {
-	if s.cfg.TrustProxy {
-		if forwarded := r.Header.Get("X-Forwarded-For"); forwarded != "" {
-			if index := strings.IndexByte(forwarded, ','); index >= 0 {
-				return strings.TrimSpace(forwarded[:index])
+	if hops := s.cfg.TrustedProxyHops; hops > 0 {
+		parts := strings.Split(r.Header.Get("X-Forwarded-For"), ",")
+		if index := len(parts) - hops; index >= 0 {
+			if ip := net.ParseIP(strings.TrimSpace(parts[index])); ip != nil {
+				return maskIPv6To64(ip)
 			}
-			return strings.TrimSpace(forwarded)
-		}
-		if realIP := r.Header.Get("X-Real-IP"); realIP != "" {
-			return strings.TrimSpace(realIP)
 		}
 	}
 
@@ -181,6 +190,18 @@ func (s *Server) clientIP(r *http.Request) string {
 		return r.RemoteAddr
 	}
 	return host
+}
+
+func maskIPv6To64(ip net.IP) string {
+	if ip.To4() == nil {
+		if v6 := ip.To16(); len(v6) == net.IPv6len {
+			masked := make([]byte, net.IPv6len)
+			copy(masked, v6)
+			clear(masked[8:])
+			return net.IP(masked).String()
+		}
+	}
+	return ip.String()
 }
 
 func decodeJSON(w http.ResponseWriter, r *http.Request, destination any) error {
@@ -232,8 +253,19 @@ func (s *Server) tooManyRequests(w http.ResponseWriter, retryAfter time.Duration
 	writeError(w, http.StatusTooManyRequests, "Terlalu banyak percobaan. Coba lagi nanti.")
 }
 
-func (s *Server) verifyPassword(password, hash string) (bool, error) {
-	s.hashSlots <- struct{}{}
-	defer func() { <-s.hashSlots }()
-	return s.hasher.Verify(password, hash)
+func (s *Server) verifyPassword(ctx context.Context, password, hash string) (bool, error) {
+	verifyCtx, cancel := context.WithTimeout(ctx, hashWaitTimeout)
+	defer cancel()
+
+	select {
+	case s.hashSlots <- struct{}{}:
+		defer func() { <-s.hashSlots }()
+		return s.hasher.Verify(password, hash)
+	case <-verifyCtx.Done():
+		return false, verifyCtx.Err()
+	}
+}
+
+func hashBusyError(err error) bool {
+	return errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled)
 }
