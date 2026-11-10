@@ -95,6 +95,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.handler.ServeHTTP(w, r)
 }
 
+func (s *Server) StartLimiterSweeper(ctx context.Context) {
+	s.ipLimiter.StartSweeping(ctx, 15*time.Minute)
+	s.accountLimiter.StartSweeping(ctx, 15*time.Minute)
+	s.emailLimiter.StartSweeping(ctx, 15*time.Minute)
+}
+
 func (s *Server) withRecovery(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {

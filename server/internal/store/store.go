@@ -164,7 +164,11 @@ func (s *Store) UserBySession(ctx context.Context, tokenHash []byte, now time.Ti
 }
 
 func (s *Store) TouchSession(ctx context.Context, tokenHash []byte, now time.Time) error {
-	const query = `update sessions set last_seen_at = $2 where token_hash = $1`
+	const query = `
+		update sessions
+		set last_seen_at = $2
+		where token_hash = $1
+		  and last_seen_at < $2 - interval '5 minutes'`
 	_, err := s.pool.Exec(ctx, query, tokenHash, now)
 	return err
 }
