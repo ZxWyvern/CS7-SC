@@ -95,19 +95,33 @@ func (s *Store) CreateUser(ctx context.Context, email, name, passwordHash, role 
 }
 
 func (s *Store) UpdatePassword(ctx context.Context, email, passwordHash string) error {
-	const query = `
-		update users
-		set password_hash = $2, password_changed_at = now()
-		where email = $1`
-
-	result, err := s.pool.Exec(ctx, query, email, passwordHash)
+	tx, err := s.pool.Begin(ctx)
 	if err != nil {
 		return err
 	}
-	if result.RowsAffected() == 0 {
+	defer tx.Rollback(ctx)
+
+	const updateQuery = `
+		update users
+		set password_hash = $2, password_changed_at = now()
+		where email = $1
+		returning id::text`
+
+	var userID string
+	err = tx.QueryRow(ctx, updateQuery, email, passwordHash).Scan(&userID)
+	if errors.Is(err, pgx.ErrNoRows) {
 		return ErrNotFound
 	}
-	return nil
+	if err != nil {
+		return err
+	}
+
+	const revokeQuery = `delete from sessions where user_id = $1::uuid`
+	if _, err := tx.Exec(ctx, revokeQuery, userID); err != nil {
+		return err
+	}
+
+	return tx.Commit(ctx)
 }
 
 func (s *Store) CreateSession(
@@ -131,7 +145,9 @@ func (s *Store) UserBySession(ctx context.Context, tokenHash []byte, now time.Ti
 		select u.id::text, u.email, u.name, u.role, u.password_hash
 		from sessions s
 		join users u on u.id = s.user_id
-		where s.token_hash = $1 and s.expires_at > $2`
+		where s.token_hash = $1
+		  and s.expires_at > $2
+		  and s.created_at > u.password_changed_at`
 
 	var user User
 	err := s.pool.QueryRow(ctx, query, tokenHash, now).Scan(
