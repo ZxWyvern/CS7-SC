@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -298,5 +299,94 @@ func TestHealth(t *testing.T) {
 	response = performJSON(server, http.MethodGet, "/api/health", nil, nil, "")
 	if response.Code != http.StatusServiceUnavailable {
 		t.Fatalf("status = %d, mau 503", response.Code)
+	}
+}
+
+func TestLoginDelay(t *testing.T) {
+	cases := []struct {
+		attempts int
+		want     time.Duration
+	}{
+		{attempts: 0, want: 0},
+		{attempts: 1, want: 0},
+		{attempts: 8, want: 0},
+		{attempts: 9, want: 250 * time.Millisecond},
+		{attempts: 10, want: 500 * time.Millisecond},
+		{attempts: 11, want: 1000 * time.Millisecond},
+		{attempts: 12, want: 2 * time.Second},
+		{attempts: 50, want: 2 * time.Second},
+	}
+	for _, tc := range cases {
+		if got := loginDelay(tc.attempts); got != tc.want {
+			t.Fatalf("loginDelay(%d) = %v, mau %v", tc.attempts, got, tc.want)
+		}
+	}
+}
+
+func performJSONRemote(server *Server, method, path string, body any, origin, remoteAddr string) *httptest.ResponseRecorder {
+	var reader io.Reader
+	if body != nil {
+		encoded, _ := json.Marshal(body)
+		reader = bytes.NewReader(encoded)
+	}
+
+	request := httptest.NewRequest(method, path, reader)
+	request.Header.Set("Content-Type", "application/json")
+	if origin != "" {
+		request.Header.Set("Origin", origin)
+	}
+	request.RemoteAddr = remoteAddr
+
+	response := httptest.NewRecorder()
+	server.ServeHTTP(response, request)
+	return response
+}
+
+func TestLoginThrottlesPerEmailAcrossIPs(t *testing.T) {
+	server, fake, hasher := testServer(t)
+	addUser(t, fake, hasher, "kata-sandi-uji")
+
+	var delays []time.Duration
+	server.sleep = func(d time.Duration) { delays = append(delays, d) }
+
+	for attempt := range 10 {
+		remoteAddr := fmt.Sprintf("192.0.2.%d:44000", attempt+1)
+		response := performJSONRemote(server, http.MethodPost, "/api/auth/login", map[string]string{
+			"email":    "siswa@contoh.id",
+			"password": "salah",
+		}, "http://localhost:4321", remoteAddr)
+
+		if response.Code != http.StatusUnauthorized {
+			t.Fatalf("percobaan %d: status = %d, mau 401", attempt+1, response.Code)
+		}
+	}
+
+	if len(delays) != 2 {
+		t.Fatalf("tunda tercatat = %d, mau 2", len(delays))
+	}
+	if delays[0] != 250*time.Millisecond || delays[1] != 500*time.Millisecond {
+		t.Fatalf("tunda = %v dan %v, mau 250ms dan 500ms", delays[0], delays[1])
+	}
+}
+
+func TestVerifyPasswordGivesUpWhenSlotsFull(t *testing.T) {
+	server, _, _ := testServer(t)
+	server.hashSlots <- struct{}{}
+	server.hashSlots <- struct{}{}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	if _, err := server.verifyPassword(ctx, "kata-sandi-uji", server.dummyHash); !hashBusyError(err) {
+		t.Fatalf("context batal harus terkirim sebagai busy, hasil = %v", err)
+	}
+}
+
+func TestHashBusyError(t *testing.T) {
+	if hashBusyError(errors.New("format hash tidak valid")) {
+		t.Fatal("error biasa bukan busy")
+	}
+	if !hashBusyError(fmt.Errorf("dibungkus: %w", context.DeadlineExceeded)) {
+		t.Fatal("DeadlineExceeded harus dianggap busy")
 	}
 }

@@ -24,6 +24,8 @@ import (
 
 const maxBodyBytes = 64 << 10
 
+const hashWaitTimeout = 5 * time.Second
+
 type SessionStore interface {
 	UserByEmail(ctx context.Context, email string) (store.User, error)
 	CreateSession(ctx context.Context, userID string, tokenHash []byte, expiresAt time.Time, ip, userAgent string) error
@@ -40,8 +42,10 @@ type Server struct {
 	logger         *slog.Logger
 	ipLimiter      *ratelimit.Limiter
 	accountLimiter *ratelimit.Limiter
+	emailLimiter   *ratelimit.Limiter
 	dummyHash      string
 	hashSlots      chan struct{}
+	sleep          func(time.Duration)
 	handler        http.Handler
 	now            func() time.Time
 }
@@ -63,8 +67,10 @@ func New(cfg config.Config, st SessionStore, hasher *auth.Hasher, logger *slog.L
 		logger:         logger,
 		ipLimiter:      ratelimit.New(30, 15*time.Minute),
 		accountLimiter: ratelimit.New(8, 15*time.Minute),
+		emailLimiter:   ratelimit.New(30, 15*time.Minute),
 		dummyHash:      dummyHash,
 		hashSlots:      make(chan struct{}, 2),
+		sleep:          time.Sleep,
 		now:            time.Now,
 	}
 
@@ -232,8 +238,19 @@ func (s *Server) tooManyRequests(w http.ResponseWriter, retryAfter time.Duration
 	writeError(w, http.StatusTooManyRequests, "Terlalu banyak percobaan. Coba lagi nanti.")
 }
 
-func (s *Server) verifyPassword(password, hash string) (bool, error) {
-	s.hashSlots <- struct{}{}
-	defer func() { <-s.hashSlots }()
-	return s.hasher.Verify(password, hash)
+func (s *Server) verifyPassword(ctx context.Context, password, hash string) (bool, error) {
+	verifyCtx, cancel := context.WithTimeout(ctx, hashWaitTimeout)
+	defer cancel()
+
+	select {
+	case s.hashSlots <- struct{}{}:
+		defer func() { <-s.hashSlots }()
+		return s.hasher.Verify(password, hash)
+	case <-verifyCtx.Done():
+		return false, verifyCtx.Err()
+	}
+}
+
+func hashBusyError(err error) bool {
+	return errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled)
 }
